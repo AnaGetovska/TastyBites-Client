@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Login from "./Components/Login/Login";
+import { Route, Routes } from "react-router-dom";
+import Layout from "./Components/Layout/Layout";
+import AllRecipes from "./Components/Recipes/AllRecipes";
+import RecipeM from "./Components/Recipes/RecipeM";
+import Favourites from "./Components/Recipes/Favourites";
+import Challenge from "./Components/Challenge/ChallengeMain";
+import ProtectedRoute from "./ProtectedRoute";
+import NavDefault from "./Components/Layout/NavDefault";
+import UserInfo from "./Components/Layout/UserInfo";
+import { Box } from "@chakra-ui/react";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box h="100%">
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="login" element={<Login />} />
+        </Route>
+        <Route path="/" element={<Layout />}>
+          <Route index path="all-recipes" element={<AllRecipes />} />
+          <Route path="recipe-m" element={<RecipeM />} />
+          <Route path="favourites" element={<Favourites />} />
+          <Route path="challenge" element={<Challenge />} />
+          <Route path="nav-default" element={<NavDefault />} />
+          <Route path="avatar" element={<UserInfo />} />
+        </Route>
+      </Routes>
+    </Box>
   );
 }
 
