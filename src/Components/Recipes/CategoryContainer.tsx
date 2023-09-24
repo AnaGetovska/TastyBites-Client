@@ -16,34 +16,19 @@ const CategoryContainer = (props: any) => {
   const values: ICategoryModel[] = props.values;
   const bg: string = props.bg;
   const isMobile: boolean = props.isMobile;
-  const setFilter = useFilter().setFilter;
-
-  function loadFilters(): string[] {
-    const savedCategories = localStorage.getItem("filterBy");
-    if (savedCategories) {
-      return JSON.parse(savedCategories);
-    }
-    return [];
-  }
-
-  const [checkedItems, setCheckedItems] = useState<string[]>(loadFilters());
+  const { filter, addKey, removeKey } = useFilter();
 
   function handleChange(e: any): void {
     const { value, checked } = e.target;
-    const index = checkedItems.indexOf(value);
-    let newCheckedItems = loadFilters();
-    if (checked === true && index === -1) {
-      newCheckedItems.push(value);
+    if (checked) {
+      addKey(value);
     } else {
-      newCheckedItems.splice(index, 1);
+      removeKey(value);
     }
-    localStorage.setItem("filterBy", JSON.stringify(newCheckedItems));
-    setCheckedItems(newCheckedItems);
-    setFilter(newCheckedItems);
   }
 
   function isChecked(key: string): boolean {
-    return checkedItems.indexOf(key) !== -1;
+    return filter.indexOf(key) !== -1;
   }
 
   const showValues = values.map((v) => (

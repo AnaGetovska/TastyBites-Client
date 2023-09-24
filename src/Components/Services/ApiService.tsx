@@ -55,6 +55,14 @@ class ApiService {
   public async getAllCategories(): Promise<ICategoryModel[]> {
     return await this.get("category/all");
   }
+
+  public async getCategoriesByType(type: string): Promise<ICategoryModel[]> {
+    return await this.get(`category/${type}/all`);
+  }
+
+  public async getCategoryByKey(key: string): Promise<ICategoryModel[]> {
+    return await this.get(`category/${key}`);
+  }
 }
 
 export default ApiService.getInstance();

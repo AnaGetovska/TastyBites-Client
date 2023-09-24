@@ -15,9 +15,11 @@ import {
   NavLink as RouterLink,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ApiService from "../Services/ApiService";
+import CategoryService from "../Services/CategoryService";
 import * as _ from "lodash";
 import { CategoryType } from "../../Models/CategoryType";
+import useFilter from "../../Hooks/useFilter";
+import CategoryTag from "../Recipes/CategoryTag";
 
 const CategoryData: ICategoryFilter[] = [
   {
@@ -42,7 +44,7 @@ const Filter = (props: any) => {
   const onFilterChange = props.onFilterchange;
 
   useEffect(() => {
-    ApiService.getAllCategories()
+    CategoryService.getAll()
       .then((categories) => {
         const groupedData = _.groupBy(categories, (c) => {
           return CategoryType[c.type];
@@ -87,7 +89,7 @@ const DesktopFilter = () => {
         direction="column"
         className="sidebar"
         bg="rgba(249, 249, 249, 1)"
-        w="15%"
+        w={{ md: "24%", lg: "20%" }}
         h="100%"
       >
         <Box
@@ -116,18 +118,18 @@ const DesktopFilter = () => {
 };
 const MobileFilter = () => {
   const [show, setShow] = useState(false);
-  const [filteredCategories, setFilteredCategories] = useState([]);
   const handleToggle = () => setShow(!show);
-  const handleCategoryChange = (items: string[]) => {};
-
+  const filteredItems = useFilter().filter;
   return (
-    <Flex display={{ md: "none" }} direction="row">
+    <Flex mt="1em" gap="2" display={{ md: "none" }} direction="row">
       <Link as={RouterLink} to="/favourites">
-        <Button bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
+        <Button mr="1em" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
           Какво имам в хладилника?
         </Button>
       </Link>
-      <Button onClick={handleToggle}>Filter</Button>
+      <Button ml="1em" onClick={handleToggle}>
+        Filter
+      </Button>
       <Collapse in={show} animateOpacity>
         <Stack bg={useColorModeValue("white", "gray.800")} p={4}>
           <Accordion allowToggle>
@@ -135,6 +137,11 @@ const MobileFilter = () => {
           </Accordion>
         </Stack>
       </Collapse>
+      <Flex mt="0.5em" justifyContent="center" gap="2" flexWrap="wrap">
+        {filteredItems?.map((item) => (
+          <CategoryTag categoryKey={item} key={item}></CategoryTag>
+        ))}
+      </Flex>
     </Flex>
   );
 };

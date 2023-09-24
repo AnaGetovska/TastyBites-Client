@@ -1,6 +1,6 @@
 import ICategoryModel from "./ICategoryModel";
 
-export default interface ICategorySidebar {
+export default interface ICategoryFilter {
   key?: string;
   title: string;
   categories: ICategoryModel[];
