@@ -1,4 +1,5 @@
 import ICategoryModel from "../../Models/ICategoryModel";
+import { IRecipeModel } from "../../Models/IRecipeModel";
 
 class ApiService {
   private static instance: ApiService;
@@ -62,6 +63,14 @@ class ApiService {
 
   public async getCategoryByKey(key: string): Promise<ICategoryModel[]> {
     return await this.get(`category/${key}`);
+  }
+
+  public async getAllRecipes(): Promise<IRecipeModel[]> {
+    return await this.get("recipe/all");
+  }
+
+  public async getAllRecipesExtended(): Promise<IRecipeModel[]> {
+    return await this.get("recipe/extended/all");
   }
 }
 

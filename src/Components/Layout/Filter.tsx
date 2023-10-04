@@ -89,7 +89,7 @@ const DesktopFilter = () => {
         direction="column"
         className="sidebar"
         bg="rgba(249, 249, 249, 1)"
-        w={{ md: "24%", lg: "20%" }}
+        w={{ md: "24%", lg: "20%", xl: "15%" }}
         h="100%"
       >
         <Box

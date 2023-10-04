@@ -22,9 +22,7 @@ export default function Login() {
   });
   const setAuth = useAuth().setAuth;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(
-    "Невалидно потребителско име или парола"
-  );
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   function handleChange(event: React.SyntheticEvent) {
     const { id, value } = event.target as HTMLInputElement;
@@ -46,9 +44,6 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((post: any) => {
-        // if (!post.ok) {
-        //   throw new Error(post ? post.error : post.statusText);
-        // }
         setAuth(post);
         navigate("/all-recipes");
       })
