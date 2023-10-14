@@ -8,7 +8,6 @@ import {
   AccordionPanel,
 } from "@chakra-ui/react";
 import ICategoryModel from "../../Models/ICategoryModel";
-import { useState } from "react";
 import useFilter from "../../Hooks/useFilter";
 
 const CategoryContainer = (props: any) => {

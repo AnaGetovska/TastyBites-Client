@@ -10,10 +10,7 @@ import {
 } from "@chakra-ui/react";
 import CategoryContainer from "../Recipes/CategoryContainer";
 import ICategoryFilter from "../../Models/ICategoryFilter";
-import {
-  BrowserRouter as Router,
-  NavLink as RouterLink,
-} from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CategoryService from "../Services/CategoryService";
 import * as _ from "lodash";
@@ -41,7 +38,6 @@ const CategoryData: ICategoryFilter[] = [
 
 const Filter = (props: any) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const onFilterChange = props.onFilterchange;
 
   useEffect(() => {
     CategoryService.getAll()
@@ -85,6 +81,8 @@ const DesktopFilter = () => {
   return (
     <>
       <Flex
+        position="sticky"
+        top="65px"
         display={{ base: "none", md: "flex" }}
         direction="column"
         className="sidebar"
@@ -121,7 +119,15 @@ const MobileFilter = () => {
   const handleToggle = () => setShow(!show);
   const filteredItems = useFilter().filter;
   return (
-    <Flex mt="1em" gap="2" display={{ md: "none" }} direction="row">
+    <Flex
+      position="sticky"
+      top="65px"
+      py="1em"
+      gap="2"
+      display={{ md: "none" }}
+      direction="row"
+      bg="white"
+    >
       <Link as={RouterLink} to="/favourites">
         <Button mr="1em" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
           Какво имам в хладилника?

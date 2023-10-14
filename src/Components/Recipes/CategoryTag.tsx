@@ -1,7 +1,6 @@
-import "../../App.css";
-import { Box, Flex, Button } from "@chakra-ui/react";
+import "../../Styles/App.css";
+import { Button } from "@chakra-ui/react";
 import CategoryService from "../Services/CategoryService";
-import * as _ from "lodash";
 import { useEffect, useState } from "react";
 import ICategoryModel from "../../Models/ICategoryModel";
 import useFilter from "../../Hooks/useFilter";
@@ -11,6 +10,7 @@ function CategoryTag(props: any) {
   const [category, setCategory] = useState<ICategoryModel>();
   const key: string = props.categoryKey;
   const { removeKey } = useFilter();
+
   useEffect(() => {
     CategoryService.getByKey(key).then((cat) => {
       setCategory(cat);

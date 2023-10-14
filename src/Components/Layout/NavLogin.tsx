@@ -15,13 +15,16 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import useAuth from "../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import _ from "lodash";
+import INavItem from "../../Models/INavItem";
 
 export default function NavLogin() {
-  const { isOpen, onToggle } = useDisclosure();
   const removeAuth = useAuth().removeAuth;
   const navigate = useNavigate();
+  const { isOpen, onToggle } = useDisclosure();
+
   return (
-    <Box>
+    <Box position="fixed" top="0" left="0" zIndex="10" right="0">
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
@@ -91,17 +94,25 @@ export default function NavLogin() {
 }
 
 const DesktopNav = () => {
+  const auth = useAuth().auth;
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
 
+  function getNavItems(): INavItem[] {
+    if (auth?.isAdmin) {
+      return navItemsData;
+    }
+    return _.filter(navItemsData, { adminOnly: false });
+  }
+
   return (
-    <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
+    <Stack alignItems="center" direction={"row"} spacing={4}>
+      {getNavItems().map((item) => (
+        <Box key={item.label}>
           <Box
             as="a"
             p={2}
-            href={navItem.href ?? "#"}
+            href={item.href ?? "#"}
             fontSize={"sm"}
             fontWeight={500}
             color={linkColor}
@@ -110,7 +121,7 @@ const DesktopNav = () => {
               color: linkHoverColor,
             }}
           >
-            {navItem.label}
+            {item.label}
           </Box>
         </Box>
       ))}
@@ -125,14 +136,14 @@ const MobileNav = () => {
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItemsData.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
   );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
+const MobileNavItem = ({ label, children, href }: INavItem) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -176,28 +187,30 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   );
 };
 
-interface NavItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
+const navItemsData: Array<INavItem> = [
   {
     label: "Рецепти",
     href: "/all-recipes",
+    adminOnly: false,
   },
   {
     label: "Седмично меню",
     href: "#",
+    adminOnly: false,
   },
   {
     label: "Любими",
     href: "/favourites",
+    adminOnly: false,
   },
   {
     label: "21-дневно предизвикателство",
     href: "/challenge",
+    adminOnly: false,
+  },
+  {
+    label: "Админ панел",
+    href: "/admin",
+    adminOnly: true,
   },
 ];

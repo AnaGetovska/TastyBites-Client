@@ -36,7 +36,7 @@ export default function Login() {
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    fetch("http://localhost:5214/api/users/authenticate", {
+    fetch("http://localhost:5214/api/user/authenticate", {
       mode: "cors",
       method: "POST",
       body: JSON.stringify(userData),

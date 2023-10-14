@@ -1,12 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
+import "./Styles/index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthProvider } from "./Context/AuthContext";
 import { FilterProvider } from "./Context/FilterContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./Styles/dihjauti.otf";
+import "./Styles/dihjauti.bold-italic.otf";
+import "./Styles/dihjauti.s-bold.otf";
+import "./Styles/dihjauti.s-italic.otf";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

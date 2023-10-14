@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import "../../App.css";
-import { Box, Flex, Image, Icon } from "@chakra-ui/react";
+import React, { useState } from "react";
+import "../../Styles/App.css";
+import { Box, Flex, Image, Icon, useMediaQuery } from "@chakra-ui/react";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { IoIosTimer } from "react-icons/io";
 import { LiaUtensilsSolid } from "react-icons/lia";
-import { RiStarFill } from "react-icons/ri";
 import StarRating from "../Rating/StarRating";
 import { IRecipeModel } from "../../Models/IRecipeModel";
 
 function RecipeM(props: any) {
+  const [isMobile] = useMediaQuery("(max-width: 992px)");
   const recipe: IRecipeModel = props.recipe;
   const imagePath =
     "./images/recipes/" + recipe._key + "/" + recipe.displayImage;
@@ -17,7 +17,7 @@ function RecipeM(props: any) {
 
   //TODO: Use rating to post in DB
   const [rating, setRating] = useState();
-
+  console.log(rating);
   //TODO: Use this to load rating data for the recipe
   const votes = [1, 1, 2, 1, 2, 4];
 
@@ -48,52 +48,36 @@ function RecipeM(props: any) {
           fit="cover"
           h="50%"
         />
-        <Box position="relative">
-          <Box fontSize="0.7em" pt="1.2em" fontWeight="500">
-            {recipe.name}
-          </Box>
-          <Icon
-            onClick={handleClick}
-            w="12px"
-            left="5px"
-            top="3px"
-            position="absolute"
-            as={isFavourite ? BsHeartFill : BsHeart}
-          ></Icon>
-          <Icon
-            w="12px"
-            top="85px"
-            left="10px"
-            position="absolute"
-            as={IoIosTimer}
-          ></Icon>
-          <Box
-            position="absolute"
-            top="78px"
-            left="22px"
-            fontSize="0.5em"
-            pt="1.2em"
-          >
-            {recipe.preparationTime} мин
-          </Box>
-          <Icon
-            w="12px"
-            top="85px"
-            left="52px"
-            position="absolute"
-            as={LiaUtensilsSolid}
-          ></Icon>
-          <Box
-            position="absolute"
-            top="78px"
-            left="67px"
-            fontSize="0.5em"
-            pt="1.2em"
-          >
-            {recipe.portions} порции
-          </Box>
-          <StarRating votes={votes} setRating={setRating}></StarRating>
-        </Box>
+        <Flex direction="column" height="50%" justifyContent="space-around">
+          <Flex direction="column">
+            <Icon
+              onClick={handleClick}
+              w="12px"
+              mt="0.2em"
+              ml="0.2em"
+              as={isFavourite ? BsHeartFill : BsHeart}
+            ></Icon>
+
+            <Box fontSize="0.7em" fontWeight="500">
+              {recipe.name}
+            </Box>
+          </Flex>
+          <Flex justifyContent="space-around" mb="0.5em">
+            <Flex direction="row" alignItems="center">
+              <Icon w="12px" as={IoIosTimer}></Icon>
+              <Box fontSize="0.5em">{recipe.preparationTime} мин</Box>
+            </Flex>
+            <Flex direction="row" alignItems="center">
+              <Icon w="12px" as={LiaUtensilsSolid}></Icon>
+              <Box fontSize="0.5em">{recipe.portions} порции</Box>
+            </Flex>
+            <StarRating
+              size={isMobile ? 8 : 10}
+              votes={votes}
+              setRating={setRating}
+            ></StarRating>
+          </Flex>
+        </Flex>
       </Flex>
     </Flex>
   );

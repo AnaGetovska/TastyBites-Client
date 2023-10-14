@@ -1,4 +1,8 @@
 export default interface ILoginResponse {
-  Token: string;
-  RefreshToken: string;
+  username: string;
+  tokens: {
+    token: string;
+    refreshToken: string;
+  };
+  isAdmin: boolean;
 }

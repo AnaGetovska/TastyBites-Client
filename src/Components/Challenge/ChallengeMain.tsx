@@ -1,5 +1,5 @@
 import React from "react";
-import "../../App.css";
+import "../../Styles/App.css";
 import { Box } from "@chakra-ui/react";
 
 function ChallengeMain() {
