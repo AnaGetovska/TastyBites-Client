@@ -1,3 +1,10 @@
+:root {
+  --primary-color: "rgb(254, 152, 1)";
+  --seconadry-color: "rgb(244, 238, 199)v";
+  --accent-color1: "rgb(204, 218, 70)";
+  --accent-color2: "rgb(105, 124, 55)";
+}
+
 .App {
   text-align: center;
   height: fit-content;

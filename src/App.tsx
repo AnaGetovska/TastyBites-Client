@@ -12,6 +12,7 @@ import UserInfo from "./Components/Layout/UserInfo";
 import { Box } from "@chakra-ui/react";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import AdminHome from "./Components/Admin/AdminHome";
+import EditRecipe from "./Components/Admin/EditRecipe";
 import UserOut from "./Components/Layout/UserOut";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route element={<AdminLayout />}>
           <Route path="admin" element={<AdminHome />} />
+          <Route path="edit-recipe" element={<EditRecipe />} />
         </Route>
         <Route element={<UserOut />}>
           <Route path="login" element={<Login />} />

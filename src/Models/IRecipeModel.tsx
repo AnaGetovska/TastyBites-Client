@@ -5,5 +5,5 @@ export interface IRecipeModel extends IArangoDocument {
   preparationTime: number;
   portions: number;
   description: string;
-  displayImage: string;
+  displayImage: File | undefined;
 }

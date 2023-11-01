@@ -1,4 +1,5 @@
 import ICategoryModel from "../../Models/ICategoryModel";
+import IIngredientModel from "../../Models/IIngredientModel";
 import { IRecipeModel } from "../../Models/IRecipeModel";
 
 class ApiService {
@@ -69,8 +70,26 @@ class ApiService {
     return await this.get("recipe/all");
   }
 
+  public async getAllRecipesByNameCut(
+    segment: string
+  ): Promise<IRecipeModel[]> {
+    return await this.get(`recipe/filter/name/` + encodeURIComponent(segment));
+  }
+
   public async getAllRecipesExtended(): Promise<IRecipeModel[]> {
     return await this.get("recipe/extended/all");
+  }
+
+  public async getAllIngredients(): Promise<IIngredientModel[]> {
+    return await this.get("ingredient/all");
+  }
+
+  public async getAllIngredientsByNameCut(
+    segment: string
+  ): Promise<IIngredientModel[]> {
+    return await this.get(
+      `ingredient/filter/name/` + encodeURIComponent(segment)
+    );
   }
 }
 

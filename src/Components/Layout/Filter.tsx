@@ -124,17 +124,17 @@ const MobileFilter = () => {
       top="65px"
       py="1em"
       gap="2"
-      display={{ md: "none" }}
-      direction="row"
+      display={{ base: "flex", md: "none" }}
+      direction="column"
       bg="white"
     >
       <Link as={RouterLink} to="/favourites">
-        <Button mr="1em" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
+        <Button mx="1em" w="70%" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
           Какво имам в хладилника?
         </Button>
       </Link>
-      <Button ml="1em" onClick={handleToggle}>
-        Filter
+      <Button mx="1em" m="auto" w={{ base: "70%" }} onClick={handleToggle}>
+        Филтър
       </Button>
       <Collapse in={show} animateOpacity>
         <Stack bg={useColorModeValue("white", "gray.800")} p={4}>

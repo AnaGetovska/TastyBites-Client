@@ -14,7 +14,6 @@ import {
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import useAuth from "../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import React from "react";
 import _ from "lodash";
 import INavItem from "../../Models/INavItem";
 

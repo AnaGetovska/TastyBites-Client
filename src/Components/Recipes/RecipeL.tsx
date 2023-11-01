@@ -17,6 +17,7 @@ import Filter from "../Layout/Filter";
 import StarRating from "../Rating/StarRating";
 import { BsFillCircleFill } from "react-icons/bs";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
+import useAuth from "../../Hooks/useAuth";
 
 function RecipeL(props: any) {
   //TODO: Need extended recipe
@@ -29,7 +30,8 @@ function RecipeL(props: any) {
 }
 
 function DesktopRecipeL() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const isAuthenticated = useAuth().auth ? true : false;
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
   const [isMobile] = useMediaQuery("(max-width: 992px)");
   const imagePath =
     "./images/recipes/48625/d9369d83-ae60-4377-ad90-a5e8a2913d9a.png";

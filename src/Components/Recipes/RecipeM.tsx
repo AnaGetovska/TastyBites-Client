@@ -6,10 +6,12 @@ import { IoIosTimer } from "react-icons/io";
 import { LiaUtensilsSolid } from "react-icons/lia";
 import StarRating from "../Rating/StarRating";
 import { IRecipeModel } from "../../Models/IRecipeModel";
+import useAuth from "../../Hooks/useAuth";
 
 function RecipeM(props: any) {
-  const [isMobile] = useMediaQuery("(max-width: 992px)");
   const recipe: IRecipeModel = props.recipe;
+  const isAuthenticated = useAuth().auth ? true : false;
+  const [isMobile] = useMediaQuery("(max-width: 992px)");
   const imagePath =
     "./images/recipes/" + recipe._key + "/" + recipe.displayImage;
   //TODO: Use this to add to favourites in DB
@@ -17,7 +19,6 @@ function RecipeM(props: any) {
 
   //TODO: Use rating to post in DB
   const [rating, setRating] = useState();
-  console.log(rating);
   //TODO: Use this to load rating data for the recipe
   const votes = [1, 1, 2, 1, 2, 4];
 
@@ -50,14 +51,15 @@ function RecipeM(props: any) {
         />
         <Flex direction="column" height="50%" justifyContent="space-around">
           <Flex direction="column">
-            <Icon
-              onClick={handleClick}
-              w="12px"
-              mt="0.2em"
-              ml="0.2em"
-              as={isFavourite ? BsHeartFill : BsHeart}
-            ></Icon>
-
+            {isAuthenticated && (
+              <Icon
+                onClick={handleClick}
+                w="12px"
+                mt="0.2em"
+                ml="0.2em"
+                as={isFavourite ? BsHeartFill : BsHeart}
+              ></Icon>
+            )}
             <Box fontSize="0.7em" fontWeight="500">
               {recipe.name}
             </Box>
@@ -71,11 +73,13 @@ function RecipeM(props: any) {
               <Icon w="12px" as={LiaUtensilsSolid}></Icon>
               <Box fontSize="0.5em">{recipe.portions} порции</Box>
             </Flex>
-            <StarRating
-              size={isMobile ? 8 : 10}
-              votes={votes}
-              setRating={setRating}
-            ></StarRating>
+            {isAuthenticated && (
+              <StarRating
+                size={isMobile ? 8 : 10}
+                votes={votes}
+                setRating={setRating}
+              ></StarRating>
+            )}
           </Flex>
         </Flex>
       </Flex>

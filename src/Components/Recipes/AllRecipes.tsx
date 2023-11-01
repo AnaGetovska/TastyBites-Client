@@ -17,7 +17,7 @@ function AllRecipes() {
 
   return (
     <Flex
-      display={{ base: "none", md: "flex" }}
+      display={{ md: "flex" }}
       direction={{ base: "column", md: "row" }}
       gap="1em"
       mt="4em"
@@ -30,7 +30,7 @@ function AllRecipes() {
         py="2em"
       >
         {allRecipes?.map((r) => (
-          <RecipeM recipe={r} />
+          <RecipeM recipe={r} key={r._key} />
         ))}
       </Flex>
     </Flex>
