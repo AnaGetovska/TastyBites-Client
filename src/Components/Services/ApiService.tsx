@@ -70,6 +70,12 @@ class ApiService {
     return await this.get("recipe/all");
   }
 
+  public async getAllRecipesByIngredients(
+    ingredientsKeys: string[]
+  ): Promise<IRecipeModel[]> {
+    return await this.post("recipe/filter/by-ingredients", ingredientsKeys);
+  }
+
   public async getAllRecipesByNameCut(
     segment: string
   ): Promise<IRecipeModel[]> {

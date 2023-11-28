@@ -9,6 +9,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 function CategoryTag(props: any) {
   const [category, setCategory] = useState<ICategoryModel>();
   const key: string = props.categoryKey;
+  const fontSize: string | undefined = props.fontSize;
   const { removeKey } = useFilter();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ function CategoryTag(props: any) {
       position="relative"
       px="1em"
       h="2em"
-      fontSize="0.8em"
+      fontSize={fontSize !== undefined ? fontSize : "0.8em"}
       bg="gray.100"
     >
       {category?.name}

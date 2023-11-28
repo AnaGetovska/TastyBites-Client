@@ -99,9 +99,9 @@ const DesktopNav = () => {
 
   function getNavItems(): INavItem[] {
     if (auth?.isAdmin) {
-      return navItemsData;
+      return _.filter(navItemsData, { desktop: true });
     }
-    return _.filter(navItemsData, { adminOnly: false });
+    return _.filter(navItemsData, { adminOnly: false, desktop: true });
   }
 
   return (
@@ -129,13 +129,21 @@ const DesktopNav = () => {
 };
 
 const MobileNav = () => {
+  const auth = useAuth().auth;
+
+  function getNavItems(): INavItem[] {
+    if (auth?.isAdmin) {
+      return navItemsData;
+    }
+    return _.filter(navItemsData, { adminOnly: false });
+  }
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {navItemsData.map((navItem) => (
+      {getNavItems().map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -191,25 +199,36 @@ const navItemsData: Array<INavItem> = [
     label: "Рецепти",
     href: "/all-recipes",
     adminOnly: false,
+    desktop: true,
   },
   {
     label: "Седмично меню",
-    href: "#",
+    href: "/menu",
     adminOnly: false,
+    desktop: true,
   },
   {
     label: "Любими",
     href: "/favourites",
     adminOnly: false,
+    desktop: true,
   },
   {
     label: "21-дневно предизвикателство",
     href: "/challenge",
     adminOnly: false,
+    desktop: true,
+  },
+  {
+    label: "Какво имам в хладилника?",
+    href: "/fridge-filter",
+    adminOnly: false,
+    desktop: false,
   },
   {
     label: "Админ панел",
     href: "/admin",
     adminOnly: true,
+    desktop: true,
   },
 ];

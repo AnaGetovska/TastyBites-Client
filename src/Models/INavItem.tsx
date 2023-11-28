@@ -4,4 +4,5 @@ export default interface INavItem {
   href: string;
   subLabel?: string;
   children?: Array<INavItem>;
+  desktop?: boolean;
 }

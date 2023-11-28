@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../Layout/NavLogin";
+import Navbar from "../Layout/Nav";
 import useAuth from "../../Hooks/useAuth";
 import Login from "../Login/Login";
 import { Box, Flex } from "@chakra-ui/react";

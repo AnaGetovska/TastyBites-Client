@@ -14,6 +14,8 @@ import AdminLayout from "./Components/Admin/AdminLayout";
 import AdminHome from "./Components/Admin/AdminHome";
 import EditRecipe from "./Components/Admin/EditRecipe";
 import UserOut from "./Components/Layout/UserOut";
+import FridgeContentsFilter from "./Components/FridgeContentsFilter";
+import Menu from "./Components/Menu/Menu";
 
 function App() {
   return (
@@ -28,12 +30,12 @@ function App() {
         </Route>
         <Route path="/" element={<Layout />}>
           <Route index path="all-recipes" element={<AllRecipes />} />
-          <Route path="recipe-m" element={<RecipeM />} />
           <Route path="recipe-l" element={<RecipeL />} />
-          <Route path="recipe-s" element={<RecipeS />} />
           <Route path="favourites" element={<Favourites />} />
+          <Route path="fridge-filter" element={<FridgeContentsFilter />} />
           <Route path="challenge" element={<Challenge />} />
           <Route path="avatar" element={<UserInfo />} />
+          <Route path="menu" element={<Menu />} />
         </Route>
       </Routes>
     </Box>

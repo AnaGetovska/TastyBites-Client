@@ -35,7 +35,15 @@
 .App-link {
   color: #61dafb;
 }
-
+.hidden {
+  transform: translateX(-100%);
+  width: 0;
+  opacity: 0;
+  z-index: -1;
+}
+.transition {
+  transition: all 0.25s;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -43,4 +51,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.add-groceries-icon:hover {
+  text-decoration: none;
 }

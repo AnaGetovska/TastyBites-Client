@@ -1,11 +1,12 @@
 import { CategoryType } from "./CategoryType";
 import IArangoDocument from "./IArangoDocument";
+import ICategoryModel from "./ICategoryModel";
 import IIngredientRequest from "./IIngredientRequest";
 import { IRecipeModel } from "./IRecipeModel";
 
 export default interface IRecipeRequest extends IRecipeModel {
   ingredients: IIngredientRequest[];
-  categoriesKeys: string[];
+  categories: ICategoryModel[] | undefined;
   allergensKeys: string[];
   images?: string;
 }

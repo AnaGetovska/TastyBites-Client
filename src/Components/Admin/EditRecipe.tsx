@@ -19,11 +19,8 @@ import {
   Th,
   Tbody,
   Td,
-  Tfoot,
   Select,
-  Editable,
-  EditablePreview,
-  EditableInput,
+  Divider,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { LiaImage } from "react-icons/lia";
@@ -33,6 +30,8 @@ import Search from "./Search";
 import _ from "lodash";
 import IRecipeRequest from "../../Models/IRecipeRequest";
 import IIngredientRequest from "../../Models/IIngredientRequest";
+import ICategoryModel from "../../Models/ICategoryModel";
+import CategoryService from "../Services/CategoryService";
 
 export default function EditRecipe(props: any) {
   const form = useRef<HTMLFormElement | null>(null);
@@ -45,8 +44,8 @@ export default function EditRecipe(props: any) {
     portions: 0,
     description: "",
     displayImage: undefined,
-    ingredients: [{ _key: "", name: "", quantity: "", measurementUnit: "" }],
-    categoriesKeys: [],
+    ingredients: [],
+    categories: [],
     allergensKeys: [],
   });
   const [file, setFile] = useState<File | undefined>();
@@ -56,7 +55,13 @@ export default function EditRecipe(props: any) {
   const [searchString, setSearchString] = useState<string>("");
   const [recipeIngredients, setRecipeIngredients] = useState<
     IIngredientRequest[]
-  >([{ _key: "", name: "", quantity: "", measurementUnit: "" }]);
+  >([]);
+  const [categories, setCategories] = useState<ICategoryModel[]>();
+  const [recipeCategories, setRecipeCategories] = useState<ICategoryModel[]>();
+
+  const setSearchValue = (searchString: string) => {
+    setSearchString(searchString);
+  };
 
   useEffect(() => {
     if (searchString.length >= 2) {
@@ -66,9 +71,18 @@ export default function EditRecipe(props: any) {
     }
   }, [searchString]);
 
+  useEffect(() => {
+    CategoryService.getAll().then((categories) => setCategories(categories));
+  });
+  console.log(categories);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setFormData((prevData) => ({ ...prevData, ["displayImage"]: file }));
+    setFormData((prevData) => ({
+      ...prevData,
+      ["displayImage"]: file,
+      ["categories"]: recipeCategories,
+    }));
     const payload = new FormData(form?.current || undefined);
 
     try {
@@ -94,10 +108,6 @@ export default function EditRecipe(props: any) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   }
 
-  const setSearchValue = (searchString: string) => {
-    setSearchString(searchString);
-  };
-
   function addIngredient(i: IIngredientModel): void {
     if (recipeIngredients.length === 0 || recipeIngredients[0].name === "") {
       let newArray = [];
@@ -120,7 +130,11 @@ export default function EditRecipe(props: any) {
           measurementUnit: "",
         };
         setRecipeIngredients((previousState) => {
-          if (!previousState.includes(newIngredient)) {
+          if (
+            !_.find(previousState, (i) => {
+              return i._key === newIngredient._key;
+            })
+          ) {
             return [...previousState, newIngredient];
           }
           return previousState;
@@ -135,6 +149,47 @@ export default function EditRecipe(props: any) {
         return ing.name !== name;
       })
     );
+  }
+
+  function modifyIngredientState(
+    state: any,
+    key: string,
+    property: string,
+    value: any
+  ) {
+    _.find(state, (i) => {
+      if (i._key === key) {
+        i[property] = value;
+      }
+    });
+    return state;
+  }
+
+  function addQuantity(ingKey: string, e: any) {
+    const quantity: string = e.target.value;
+    setRecipeIngredients((prev) =>
+      modifyIngredientState(prev, ingKey, "quantity", quantity)
+    );
+  }
+
+  function addMeasurementUnit(ingKey: string, e: any): void {
+    const measurementUnit: string = e.target.value;
+    setRecipeIngredients((prev) =>
+      modifyIngredientState(prev, ingKey, "measurementUnit", measurementUnit)
+    );
+  }
+
+  function onChangeCategory(category: ICategoryModel): void {
+    let currentCategories = [];
+    if (recipeCategories === undefined) {
+      currentCategories.push(category);
+    } else {
+      let currentCategories: ICategoryModel[] = recipeCategories;
+      currentCategories.push(category);
+    }
+    //FIX Categories
+    console.log(currentCategories);
+    setRecipeCategories(currentCategories);
   }
 
   return (
@@ -174,23 +229,22 @@ export default function EditRecipe(props: any) {
             color="#1A202C"
             bg="gray.100"
           />
-          <Flex direction="row" mt="1em" gap="1em">
-            {searchString.length >= 2 &&
-              suggestedIngredients?.map((i) => (
-                <Tag
-                  _hover={{ bg: "gray.200", cursor: "pointer" }}
-                  key={i._key}
-                  onClick={(e) => addIngredient(i)}
-                >
-                  {i.name}
-                </Tag>
-              ))}
-          </Flex>
+          <Box h="5em">
+            <Flex direction="row" mt="1em" gap="1em">
+              {searchString.length >= 2 &&
+                suggestedIngredients?.map((i) => (
+                  <Tag
+                    _hover={{ bg: "gray.200", cursor: "pointer" }}
+                    key={i._key}
+                    onClick={(e) => addIngredient(i)}
+                  >
+                    {i.name}
+                  </Tag>
+                ))}
+            </Flex>
+          </Box>
           <TableContainer>
             <Table variant="simple">
-              <TableCaption>
-                Добави всички продукти необходими за рецептата
-              </TableCaption>
               <Thead>
                 <Tr>
                   <Th>Продукт</Th>
@@ -202,20 +256,23 @@ export default function EditRecipe(props: any) {
                 {recipeIngredients.map((i) => (
                   <Tr>
                     <Td>{i.name}</Td>
-                    <Td>
+                    <Td onChange={(e) => addQuantity(i._key, e)}>
                       <Input type="text" />
                     </Td>
                     <Td w="25%">
-                      <Select placeholder="Select option">
-                        <option value="option1">с.л.</option>
-                        <option value="option2">ч.л.</option>
-                        <option value="option2">ч.ч.</option>
-                        <option value="option2">к.ч.</option>
-                        <option value="option2">щипка/и</option>
-                        <option value="option3">гр.</option>
-                        <option value="option3">кг.</option>
-                        <option value="option3">л.</option>
-                        <option value="option3">мл.</option>
+                      <Select
+                        onChange={(e) => addMeasurementUnit(i._key, e)}
+                        placeholder="Select option"
+                      >
+                        <option value="с.л.">с.л.</option>
+                        <option value="ч.л.">ч.л.</option>
+                        <option value="ч.ч.">ч.ч.</option>
+                        <option value="к.ч.">к.ч.</option>
+                        <option value="щипка/и">щипка/и</option>
+                        <option value="гр.">гр.</option>
+                        <option value="кг.">кг.</option>
+                        <option value="л.">л.</option>
+                        <option value="мл.">мл.</option>
                       </Select>
                     </Td>
                     <Td onClick={(e) => removeIngredient(i.name)}>X</Td>
@@ -223,7 +280,31 @@ export default function EditRecipe(props: any) {
                 ))}
               </Tbody>
             </Table>
+            <FormHelperText>
+              Добави всички продукти необходими за рецептата.
+            </FormHelperText>
           </TableContainer>
+        </FormControl>
+        <FormControl>
+          <FormLabel>Свързани категории</FormLabel>
+          <Flex flexWrap="wrap" my="1em" direction="row">
+            {categories?.map((c) => (
+              <Tag
+                m="0.5em"
+                _hover={{ bg: "gray.200", cursor: "pointer" }}
+                key={c._key}
+                onClick={(e) => onChangeCategory(c)}
+              >
+                {c.name}
+              </Tag>
+            ))}
+          </Flex>
+          <Divider />
+          <Flex flexWrap="wrap" my="1em" direction="row">
+            {recipeCategories?.map((c) => (
+              <Box>{c.name}</Box>
+            ))}
+          </Flex>
         </FormControl>
         <FormControl>
           <Box

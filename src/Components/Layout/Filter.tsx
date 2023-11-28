@@ -97,7 +97,7 @@ const DesktopFilter = () => {
         >
           Всички рецепти
         </Box>
-        <Link as={RouterLink} to="/favourites">
+        <Link as={RouterLink} to="/fridge-filter">
           <Button
             w="95%"
             bg="rgba(213, 236, 165, 1)"
@@ -122,22 +122,32 @@ const MobileFilter = () => {
     <Flex
       position="sticky"
       top="65px"
-      py="1em"
-      gap="2"
+      py="0.5em"
       display={{ base: "flex", md: "none" }}
       direction="column"
       bg="white"
     >
-      <Link as={RouterLink} to="/favourites">
+      {/* <Link as={RouterLink} to="/fridge-filter">
         <Button mx="1em" w="70%" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
           Какво имам в хладилника?
         </Button>
-      </Link>
-      <Button mx="1em" m="auto" w={{ base: "70%" }} onClick={handleToggle}>
+      </Link> */}
+      <Button
+        fontSize={"0.8em"}
+        h="2.2em"
+        m="auto"
+        w={{ base: "70%" }}
+        onClick={handleToggle}
+      >
         Филтър
       </Button>
       <Collapse in={show} animateOpacity>
-        <Stack bg={useColorModeValue("white", "gray.800")} p={4}>
+        <Stack
+          bg={useColorModeValue("white", "gray.800")}
+          w="70%"
+          m="auto"
+          py={1}
+        >
           <Accordion allowToggle>
             {FillCategory(CategoryData, true, "gray.100")}
           </Accordion>
@@ -145,7 +155,11 @@ const MobileFilter = () => {
       </Collapse>
       <Flex mt="0.5em" justifyContent="center" gap="2" flexWrap="wrap">
         {filteredItems?.map((item) => (
-          <CategoryTag categoryKey={item} key={item}></CategoryTag>
+          <CategoryTag
+            fontSize="0.7em"
+            categoryKey={item}
+            key={item}
+          ></CategoryTag>
         ))}
       </Flex>
     </Flex>
