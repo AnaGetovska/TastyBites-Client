@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthProvider } from "./Context/AuthContext";
 import { FilterProvider } from "./Context/FilterContext";
+import { ShoppingListProvider } from "./Context/ShoppingListContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./Styles/dihjauti.otf";
 import "./Styles/dihjauti.bold-italic.otf";
@@ -18,18 +19,20 @@ const root = ReactDOM.createRoot(
 root.render(
   <AuthProvider>
     <FilterProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/*"
-            element={
-              <ChakraProvider>
-                <App />
-              </ChakraProvider>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <ShoppingListProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/*"
+              element={
+                <ChakraProvider>
+                  <App />
+                </ChakraProvider>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </ShoppingListProvider>
     </FilterProvider>
   </AuthProvider>
 );

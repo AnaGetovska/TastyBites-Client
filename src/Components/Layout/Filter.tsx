@@ -127,13 +127,9 @@ const MobileFilter = () => {
       direction="column"
       bg="white"
     >
-      {/* <Link as={RouterLink} to="/fridge-filter">
-        <Button mx="1em" w="70%" bg="rgba(213, 236, 165, 1)" fontSize="0.8em">
-          Какво имам в хладилника?
-        </Button>
-      </Link> */}
       <Button
         fontSize={"0.8em"}
+        bgColor="rgb(251 233 188)"
         h="2.2em"
         m="auto"
         w={{ base: "70%" }}

@@ -4,17 +4,33 @@ import Filter from "../Layout/Filter";
 import RecipeM from "./RecipeM";
 import ApiService from "../Services/ApiService";
 import { useEffect, useState } from "react";
-import { IRecipeModel } from "../../Models/IRecipeModel";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
+import useFilter from "../../Hooks/useFilter";
+import _ from "lodash";
 
 function AllRecipes() {
-  const [allRecipes, setAllRecipes] = useState<IRecipeModel[]>();
+  const [allRecipes, setAllRecipes] = useState<IExtendedRecipeModel[]>();
+  const filteredCategories: string[] = useFilter().filter;
+
+  function filterRecipes(): IExtendedRecipeModel[] {
+    if (filteredCategories.length === 0) {
+      return allRecipes as IExtendedRecipeModel[];
+    }
+    return _.filter(
+      allRecipes,
+      (recipe: IExtendedRecipeModel) =>
+        _.intersection(
+          _.map(recipe.categories, (cat) => cat._key),
+          filteredCategories
+        ).length > 0
+    ) as IExtendedRecipeModel[];
+  }
 
   useEffect(() => {
     ApiService.getAllRecipesExtended().then((recipes) =>
       setAllRecipes(recipes)
     );
   }, []);
-
   return (
     <Flex
       display={{ md: "flex" }}
@@ -29,8 +45,8 @@ function AllRecipes() {
         justifyContent="space-around"
         py="2em"
       >
-        {allRecipes?.map((r) => (
-          <RecipeM recipe={r} key={r._key} />
+        {filterRecipes()?.map((r) => (
+          <RecipeM recipe={r} key={r?._key} />
         ))}
       </Flex>
     </Flex>

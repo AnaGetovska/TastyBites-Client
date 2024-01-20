@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import ILoginResponse from "../Models/ILoginResponse";
+import ApiService from "../Components/Services/ApiService";
 
 export interface IAuthContext {
   setAuth: Function;
@@ -19,12 +20,14 @@ const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     if (!authString || authString === "undefined") {
       return null;
     }
-    //долната проверка може да се махне
-    return authString ? JSON.parse(authString) : null;
+    const auth = JSON.parse(authString);
+    ApiService.setToken(auth.tokens.token);
+    return auth;
   };
 
   const saveAuth = (userAuth: ILoginResponse) => {
     localStorage.setItem("auth", JSON.stringify(userAuth));
+    ApiService.setToken(userAuth.tokens.token);
     setAuth(userAuth);
   };
 

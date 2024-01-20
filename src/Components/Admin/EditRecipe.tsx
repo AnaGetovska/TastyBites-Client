@@ -264,10 +264,11 @@ export default function EditRecipe(props: any) {
                         onChange={(e) => addMeasurementUnit(i._key, e)}
                         placeholder="Select option"
                       >
-                        <option value="с.л.">с.л.</option>
+                                <option value="с.л.">с.л.</option>
                         <option value="ч.л.">ч.л.</option>
                         <option value="ч.ч.">ч.ч.</option>
                         <option value="к.ч.">к.ч.</option>
+                                <option value="с.л.">бр.</option>
                         <option value="щипка/и">щипка/и</option>
                         <option value="гр.">гр.</option>
                         <option value="кг.">кг.</option>

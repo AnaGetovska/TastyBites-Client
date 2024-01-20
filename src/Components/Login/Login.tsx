@@ -69,12 +69,17 @@ export default function Login() {
             "55%", // 48em-62em
             "25%", // 62em+
           ]}
-          h="70%"
           bg="white"
           borderRadius="15"
         >
-          <Image m="1em" w="15%" src="/images/Logo.svg" />
-          <Heading mt="3em" as="h1" textAlign="center" fontSize="lg" mb="1.5em">
+          <Image m="1em" w="18%" src="/images/Logo.svg" />
+          <Heading
+            mt="1.2em"
+            as="h1"
+            textAlign="center"
+            fontSize="1.5em"
+            mb="1em"
+          >
             Влез в профила си
           </Heading>
           <Center>
@@ -106,6 +111,7 @@ export default function Login() {
                     isLoading={isSubmitting}
                     bg="rgba(213, 236, 165, 1)"
                     type="submit"
+                    mb="3em"
                   >
                     Submit
                   </Button>

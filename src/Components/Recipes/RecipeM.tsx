@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import "../../Styles/App.css";
-import { Box, Flex, Image, Icon, useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, Image, Icon, useMediaQuery, Link } from "@chakra-ui/react";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { IoIosTimer } from "react-icons/io";
 import { LiaUtensilsSolid } from "react-icons/lia";
 import StarRating from "../Rating/StarRating";
-import { IRecipeModel } from "../../Models/IRecipeModel";
 import useAuth from "../../Hooks/useAuth";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
 
 function RecipeM(props: any) {
-  const recipe: IRecipeModel = props.recipe;
+  const recipe: IExtendedRecipeModel = props.recipe;
+  const navigate = useNavigate();
   const isAuthenticated = useAuth().auth ? true : false;
   const [isMobile] = useMediaQuery("(max-width: 992px)");
   const imagePath =
@@ -20,7 +22,7 @@ function RecipeM(props: any) {
   //TODO: Use rating to post in DB
   const [rating, setRating] = useState();
   //TODO: Use this to load rating data for the recipe
-  const votes = [1, 1, 2, 1, 2, 4];
+  const votes = [1, 1, 2, 5, 5, 4];
 
   function handleClick() {
     setIsFavourite(!isFavourite);
@@ -43,6 +45,7 @@ function RecipeM(props: any) {
         borderRadius="5px"
       >
         <Image
+          onClick={(e) => navigate("/recipe/" + recipe._key)}
           borderTopRadius="5px"
           src={imagePath}
           alt="Chicken meal"
@@ -76,7 +79,8 @@ function RecipeM(props: any) {
             {isAuthenticated && (
               <StarRating
                 size={isMobile ? 8 : 10}
-                votes={votes}
+                rating={recipe.rating}
+                ratingCount={recipe.ratingCount}
                 setRating={setRating}
               ></StarRating>
             )}

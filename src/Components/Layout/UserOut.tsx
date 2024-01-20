@@ -3,6 +3,7 @@ import Navbar from "./Nav";
 import useAuth from "../../Hooks/useAuth";
 import Login from "../Login/Login";
 import { Box, Flex } from "@chakra-ui/react";
+import Register from "../Login/Register";
 
 export default function UserOut() {
   const user = useAuth().auth;
@@ -15,7 +16,7 @@ export default function UserOut() {
       {!user && (
         <Box h="100%">
           <main className="App">
-            <Login />
+            <Register />
           </main>
         </Box>
       )}

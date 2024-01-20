@@ -1,29 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../Styles/App.css";
-import { Box, Divider, Flex, Image, Link } from "@chakra-ui/react";
+import { Box, Flex, Image, Link } from "@chakra-ui/react";
 import IIngredientModel from "../../Models/IIngredientModel";
+import useProducts from "../../Hooks/useProducts";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
+import ApiService from "../Services/ApiService";
+import IShoppingListItem from "../../Models/IShoppingListItem";
 
 function RecipeS(props: any) {
-  const ingredients: [string, string] = props.ingredients;
+  const recipe: IExtendedRecipeModel = props?.recipe;
+  const ingredients: IIngredientModel[] = recipe?.ingredients;
+  const imagePath = `/images/recipes/${recipe._key}/${recipe.displayImage}`;
+  console.log(recipe);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [shoppingList, setShoppingList] = useState<IIngredientModel[]>([]);
+  const [shoppingListItem, setShoppingListItem] = useState<IShoppingListItem>();
 
   function toggleIngredinets(): void {
     setIsOpen((prevValue) => !prevValue);
   }
 
+  useEffect(() => {
+    if (shoppingListItem === undefined) {
+      return;
+    }
+    ApiService.addToShoppingList(shoppingListItem);
+  }, [shoppingListItem]);
+
   function handleClick(i: IIngredientModel): void {
-    setShoppingList((prevState) => [...prevState, i]);
-    console.log(shoppingList);
+    const itemValue = [i._key, i.name, i.quantity, i.measurementUnit];
+
+    const shoppingItem: IShoppingListItem = {
+      isIngredient: true,
+      value: itemValue.join("|"),
+    };
+
+    setShoppingListItem(shoppingItem);
   }
 
   return (
     <Flex direction="row">
-      <Flex
-        w={{ base: "3em", md: "6em", lg: "9em" }}
-        h={{ base: "10em", md: "10em", lg: "11em" }}
-        minW="7em"
+      <Box
+        h={{ base: "12em", md: "12em", lg: "13em" }}
+        minW="8em"
         my="1em"
         boxShadow="md"
       >
@@ -36,20 +55,20 @@ function RecipeS(props: any) {
         >
           <Image
             borderTopRadius="5px"
-            src={"./images/vegetables.jpg"}
+            src={imagePath}
             alt="Chicken meal"
             fit="cover"
             h="60%"
           />
-          <Box fontSize="0.8em" fontWeight={"500"} m="auto">
-            Зеленчуци на фурна
+          <Box fontSize="0.8em" fontWeight={"500"} m="auto" mx="0.5em">
+            {recipe?.name}
           </Box>
         </Flex>
-      </Flex>
+      </Box>
       <Flex direction="row" w="100%" position={"relative"}>
         <Box
           position={"relative"}
-          h="11em"
+          h={{ base: "12em", md: "12em", lg: "13em" }}
           mt="1em"
           className={isOpen ? "transition" : "hidden transition"}
           css={{
@@ -70,8 +89,8 @@ function RecipeS(props: any) {
             bg="rgba(251, 233, 188, 1)"
             my="0"
             p="0.5em"
-            w={{ base: "3em", md: "6em", lg: "7em" }}
-            h="11em"
+            h={{ base: "12em", md: "12em", lg: "13em" }}
+            minW="8em"
             overflowY={"scroll"}
             className={
               isOpen ? "transition scroll" : "hidden transition scroll"
@@ -89,10 +108,10 @@ function RecipeS(props: any) {
               },
             }}
           >
-            {ingredients.map((i: any) => (
+            {ingredients?.map((i: any) => (
               <Flex fontSize={"0.6em"} justifyContent={"space-between"}>
                 <Box textAlign="start">
-                  {i.ingredient} - {i.measurement}
+                  {i.name} - {i.quantity + " " + i.measurementUnit}
                 </Box>
                 <Link
                   className="add-groceries-icon"
@@ -104,22 +123,17 @@ function RecipeS(props: any) {
             ))}
           </Box>
         </Box>
-
-        <Box
+        <Image
           onClick={toggleIngredinets}
-          h="1.4em"
-          m="0"
-          transform={"rotate(90deg) translateX(50%)"}
-          px="1em"
-          borderTopRadius={"5px"}
-          fontSize="0.8em"
-          bg="rgba(251, 233, 188, 1)"
+          w="1.4em"
           position={"absolute"}
-          top="0.5em"
-          right={"-1.4em"}
-        >
-          Продукти
-        </Box>
+          top="1em"
+          right={{ base: "1em", md: "1em", lg: "1.85em" }}
+          borderTopRadius="5px"
+          src={"./images/products.png"}
+          alt="products label"
+          fit="cover"
+        />
       </Flex>
     </Flex>
   );

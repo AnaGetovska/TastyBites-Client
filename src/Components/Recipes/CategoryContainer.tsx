@@ -31,7 +31,7 @@ const CategoryContainer = (props: any) => {
   }
 
   const showValues = values.map((v) => (
-    <Flex key={v._key}>
+    <Flex key={v._key} textAlign="start">
       <Checkbox
         key={v._key}
         onChange={handleChange}

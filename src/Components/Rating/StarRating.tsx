@@ -3,24 +3,24 @@ import "../../Styles/App.css";
 import { Box, HStack } from "@chakra-ui/react";
 import { FaStar } from "react-icons/fa";
 interface IStarRating {
-  votes: number[];
+  ratingCount: number;
+  rating: number;
   setRating: Function;
   position?: "static" | "relative" | "fixed" | "absolute" | "sticky";
   top?: { base: string; lg: string };
   left?: string;
-  count?: number;
+  starsCount?: number;
   size?: any;
   hideAverageRating?: boolean;
 }
 function StarRating({
-  votes,
+  ratingCount,
+  rating,
   setRating,
-  count,
+  starsCount,
   size,
   hideAverageRating,
 }: IStarRating) {
-  const timesVoted = votes.length;
-  const rating = Math.round(votes.reduce((a, b) => a + b, 0)) / timesVoted;
   const [hover, setHover] = useState<number | null>(null);
   return (
     <Box position="relative">
@@ -32,7 +32,7 @@ function StarRating({
         top="-15px"
         left="0"
       >
-        {rating.toFixed(2)}/5
+        {rating + "/5"}
       </Box>
       <Box
         fontSize="0.5em"
@@ -41,10 +41,10 @@ function StarRating({
         top="-15px"
         right="0"
       >
-        ({timesVoted})
+        ({ratingCount})
       </Box>
       <HStack spacing="1px">
-        {[...Array(count || 5)].map((star, index) => {
+        {[...Array(starsCount || 5)].map((star, index) => {
           const ratingValue = index + 1;
           return (
             <Box

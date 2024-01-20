@@ -1,12 +1,20 @@
+import useAuth from "../../Hooks/useAuth";
 import ICategoryModel from "../../Models/ICategoryModel";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
+import IInMenuModel from "../../Models/IInMenuModel";
 import IIngredientModel from "../../Models/IIngredientModel";
 import { IRecipeModel } from "../../Models/IRecipeModel";
+import IShoppingListItem from "../../Models/IShoppingListItem";
 
 class ApiService {
   private static instance: ApiService;
   private baseApiUrl = "http://localhost:5214/api/";
-
+  private token: string = "";
   private constructor() {}
+
+  public setToken(token: string) {
+    this.token = token;
+  }
 
   public static getInstance(): ApiService {
     if (!ApiService.instance) {
@@ -17,7 +25,9 @@ class ApiService {
   }
 
   public async get(route: string): Promise<any> {
-    const response = await fetch(this.baseApiUrl + route);
+    const response = await fetch(this.baseApiUrl + route, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
     return this.handleResponse(response);
   }
 
@@ -25,7 +35,10 @@ class ApiService {
     const response = await fetch(this.baseApiUrl + route, {
       method: "post",
       body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
     });
     return this.handleResponse(response);
   }
@@ -34,7 +47,10 @@ class ApiService {
     const response = await fetch(this.baseApiUrl + route, {
       method: "put",
       body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
     });
     return this.handleResponse(response);
   }
@@ -42,6 +58,10 @@ class ApiService {
   public async delete(route: string): Promise<any> {
     const response = await fetch(this.baseApiUrl + route, {
       method: "delete",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
     });
     return this.handleResponse(response);
   }
@@ -50,7 +70,12 @@ class ApiService {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     } else {
-      return await response.json();
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        return await response.json();
+      }
+
+      return null;
     }
   }
 
@@ -82,8 +107,20 @@ class ApiService {
     return await this.get(`recipe/filter/name/` + encodeURIComponent(segment));
   }
 
-  public async getAllRecipesExtended(): Promise<IRecipeModel[]> {
+  public async getAllRecipesExtended(): Promise<IExtendedRecipeModel[]> {
     return await this.get("recipe/extended/all");
+  }
+
+  public async getRecipeExtendedByKey(
+    key: string
+  ): Promise<IExtendedRecipeModel[]> {
+    return await this.get(`recipe/extended/${key}`);
+  }
+
+  public async getAllRecipesExtendedByKeys(
+    keys: string[]
+  ): Promise<IExtendedRecipeModel[]> {
+    return await this.get(`recipe/extended?keys=${keys.join(",")}`);
   }
 
   public async getAllIngredients(): Promise<IIngredientModel[]> {
@@ -96,6 +133,34 @@ class ApiService {
     return await this.get(
       `ingredient/filter/name/` + encodeURIComponent(segment)
     );
+  }
+  public async getAllIngredientsByKeys(
+    keys: string[]
+  ): Promise<IIngredientModel[]> {
+    return await this.post("ingredient/filter/", keys);
+  }
+
+  public async getWeeklyMenu(): Promise<IInMenuModel[]> {
+    return await this.get("user/menu");
+  }
+
+  public async setWeeklyMenu(
+    days: number[],
+    recipeKey: string
+  ): Promise<IInMenuModel[]> {
+    return await this.post(`user/menu/${recipeKey}`, days);
+  }
+
+  public async addToShoppingList(item: IShoppingListItem) {
+    return await this.post("user/shopping-list", item);
+  }
+
+  public async getShoppingList(): Promise<IShoppingListItem[]> {
+    return await this.get("user/shopping-list");
+  }
+
+  public async deleteFromShoppingList(index: number) {
+    return await this.delete("user/shopping-list/" + index);
   }
 }
 

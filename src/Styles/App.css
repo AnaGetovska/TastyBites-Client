@@ -7,7 +7,7 @@
 
 .App {
   text-align: center;
-  height: fit-content;
+  height: inherit;
 }
 
 .App-logo {

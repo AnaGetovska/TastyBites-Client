@@ -9,17 +9,18 @@ import RecipeS from "./Components/Recipes/RecipeS";
 import Favourites from "./Components/Recipes/Favourites";
 import Challenge from "./Components/Challenge/ChallengeMain";
 import UserInfo from "./Components/Layout/UserInfo";
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import AdminHome from "./Components/Admin/AdminHome";
 import EditRecipe from "./Components/Admin/EditRecipe";
 import UserOut from "./Components/Layout/UserOut";
 import FridgeContentsFilter from "./Components/FridgeContentsFilter";
 import Menu from "./Components/Menu/Menu";
+import Register from "./Components/Login/Register";
 
 function App() {
   return (
-    <Box h="100%">
+    <Flex direction="column" h="100%">
       <Routes>
         <Route element={<AdminLayout />}>
           <Route path="admin" element={<AdminHome />} />
@@ -27,10 +28,11 @@ function App() {
         </Route>
         <Route element={<UserOut />}>
           <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
         <Route path="/" element={<Layout />}>
           <Route index path="all-recipes" element={<AllRecipes />} />
-          <Route path="recipe-l" element={<RecipeL />} />
+          <Route path="recipe/:key" element={<RecipeL />} />
           <Route path="favourites" element={<Favourites />} />
           <Route path="fridge-filter" element={<FridgeContentsFilter />} />
           <Route path="challenge" element={<Challenge />} />
@@ -38,7 +40,7 @@ function App() {
           <Route path="menu" element={<Menu />} />
         </Route>
       </Routes>
-    </Box>
+    </Flex>
   );
 }
 

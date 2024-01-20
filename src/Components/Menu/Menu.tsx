@@ -1,15 +1,47 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import RecipeS from "../Recipes/RecipeS";
+import ShoppingList from "./ShoppingList";
+import { useEffect, useState } from "react";
+import ApiService from "../Services/ApiService";
+import IInMenuModel from "../../Models/IInMenuModel";
+import _ from "lodash";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
+
+interface DayRecipeMap {
+  [key: string]: IExtendedRecipeModel[];
+}
 
 export default function Menu() {
-  const ingredients = [
-    { ingredient: "Ориз", measurement: "500 гр" },
-    { ingredient: "Олио", measurement: "2 с.л." },
-    { ingredient: "Домати", measurement: "2 бр." },
-    { ingredient: "Лук", measurement: "2 бр." },
-    { ingredient: "Босилек", measurement: "1 стрък" },
-    { ingredient: "Зехтин", measurement: "4 с.л" },
-  ];
+  const [menu, setMenu] = useState<IInMenuModel[]>();
+  const [dayRecipes, setDayRecipes] = useState<DayRecipeMap>();
+  const [recipes, setRecipes] = useState<IExtendedRecipeModel[]>();
+  console.log(recipes);
+  useEffect(() => {
+    ApiService.getWeeklyMenu().then((menu): any => {
+      setMenu(menu);
+      const recipeKeysInMenu = _.uniq(
+        _.map(menu, (el) => el._from.split("/")[1])
+      );
+      const recipesByDay = _.groupBy(menu, "day");
+      let tempDayRecipes: DayRecipeMap = {};
+      if (recipeKeysInMenu.length === 0) {
+        return;
+      }
+      ApiService.getAllRecipesExtendedByKeys(recipeKeysInMenu).then(
+        (recipes): any => {
+          setRecipes(recipes);
+          Object.keys(recipesByDay).forEach((day) => {
+            tempDayRecipes[day] = recipesByDay[day].map((r) =>
+              _.find(recipes, (i) => i._key === r._from.split("/")[1])
+            ) as IExtendedRecipeModel[];
+          });
+          setDayRecipes(tempDayRecipes);
+          console.log(dayRecipes);
+        }
+      );
+    });
+  }, []);
+
   const daysOfWeek = [
     "Понеделник",
     "Вторник",
@@ -41,13 +73,13 @@ export default function Menu() {
           borderRadius={"5px"}
           bg="rgba(213, 236, 165, 1)"
           fontWeight={"500"}
-          fontSize={{ base: "1em", md: "1.2em", lg: "1.5em" }}
+          fontSize={{ base: "1.2em", md: "1.5em", lg: "1.7em" }}
         >
           Седмично меню
         </Box>
       </Box>
       <Flex direction="column">
-        {daysOfWeek.map((i) => (
+        {_.keys(dayRecipes).map((i) => (
           <Flex
             position={"relative"}
             flexWrap={"wrap"}
@@ -65,14 +97,17 @@ export default function Menu() {
               top="-15px"
               left="-15px"
               borderRadius={"5px"}
-              fontSize={"1.2em"}
+              fontSize={{ base: "1em", md: "1.2em", lg: "1.5em" }}
             >
-              {i}
+              {daysOfWeek[Number(i) - 1]}
             </Box>
-            <RecipeS ingredients={ingredients} />
+            {(dayRecipes as DayRecipeMap)[i].map((r) => (
+              <RecipeS recipe={r} />
+            ))}
           </Flex>
         ))}
       </Flex>
+      <ShoppingList></ShoppingList>
     </Flex>
   );
 }

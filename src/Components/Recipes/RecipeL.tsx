@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../Styles/App.css";
 import {
   Box,
@@ -18,71 +18,48 @@ import StarRating from "../Rating/StarRating";
 import { BsFillCircleFill } from "react-icons/bs";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import useAuth from "../../Hooks/useAuth";
+import ApiService from "../Services/ApiService";
+import IIngredientModel from "../../Models/IIngredientModel";
+import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
+import { useNavigate, useParams } from "react-router-dom";
+import IInMenuModel from "../../Models/IInMenuModel";
+import AddInMenu from "../Menu/AddInMenu";
 
 function RecipeL(props: any) {
-  //TODO: Need extended recipe
+  const [recipe, setRecipe] = useState<IExtendedRecipeModel>();
+  const [menu, setMenu] = useState<IInMenuModel[]>();
+  const { key } = useParams();
+  useEffect(() => {
+    ApiService.getRecipeExtendedByKey(key || "0").then((recipe) => {
+      setRecipe(recipe[0]);
+    });
+  }, [recipe === undefined]);
+
   return (
     <>
-      <DesktopRecipeL />
-      <MobileRecipeL />
+      <DesktopRecipeL recipe={recipe} key={key} />
+      <MobileRecipeL recipe={recipe} />
     </>
   );
 }
 
-function DesktopRecipeL() {
+function DesktopRecipeL(props: any) {
+  const { key } = useParams();
   const isAuthenticated = useAuth().auth ? true : false;
+
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
-  const [isMobile] = useMediaQuery("(max-width: 992px)");
-  const imagePath =
-    "./images/recipes/48625/d9369d83-ae60-4377-ad90-a5e8a2913d9a.png";
-  const ingredients = [
-    {
-      name: "Пилешко филе",
-      description: "Филе от пиле.",
-      _id: "Ingredient/86966",
-      _key: "86966",
-      _rev: "_gq3dYUC---",
-      measure: "700гр",
-    },
-    {
-      name: "Ориз",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "250гр",
-    },
-    {
-      name: "Банани",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "18бр.",
-    },
-    {
-      name: "Сол",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "1с.л.",
-    },
-    {
-      name: "Спанак",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "500гр",
-    },
-  ];
-  const votes = [1, 1, 2, 1, 2, 4];
   const [rating, setRating] = useState();
-  function handleClick() {
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  const recipe = props?.recipe;
+  const rIngredients: IIngredientModel[] = props.recipe?.ingredients;
+  const [isMobile] = useMediaQuery("(max-width: 992px)");
+  const imagePath = `/images/recipes/${key}/${recipe?.displayImage}`;
+
+  function handleIsFavourite() {
     setIsFavourite(!isFavourite);
   }
-  const [isFavourite, setIsFavourite] = useState(false);
+
   return (
     <Flex
       display={{ base: "none", md: "flex" }}
@@ -112,31 +89,24 @@ function DesktopRecipeL() {
           <Flex direction="column" textAlign="initial" px="1em">
             <Box h="1em"></Box>
             <hr />
-            {ingredients.map((i) => {
-              return (
-                <Flex
-                  direction="column"
-                  fontSize={{ md: "0.7em", lg: "0.8em" }}
-                  fontWeight="500"
-                  w="100%"
-                >
-                  <Flex direction="row" alignItems="center" my="0.2em">
-                    <Icon
-                      alignSelf="center"
-                      color="orange"
-                      w="0.5em"
-                      mr="1em"
-                      as={BsFillCircleFill}
-                    ></Icon>
-                    <Flex justifyContent="space-between" w="100%" my="0.5em">
-                      <Box>{i.name}</Box>
-                      <Box alignSelf="flex-end">{i.measure}</Box>
-                    </Flex>
+            {rIngredients?.map((i: any) => (
+              <Flex
+                direction="column"
+                fontSize={{ md: "0.7em", lg: "0.8em" }}
+                fontWeight="500"
+                w="100%"
+              >
+                <Flex direction="row" alignItems="center" my="0.2em">
+                  <Flex justifyContent="space-between" w="100%" my="0.5em">
+                    <Box>{i.name}</Box>
+                    <Box alignSelf="flex-end">
+                      {i.quantity + " " + i.measurementUnit}
+                    </Box>
                   </Flex>
-                  <Divider />
                 </Flex>
-              );
-            })}
+                <Divider />
+              </Flex>
+            ))}
             <Box h="2em"></Box>
           </Flex>
         </Box>
@@ -154,7 +124,7 @@ function DesktopRecipeL() {
               ></Image>
               {isLoggedIn && (
                 <Box
-                  onClick={handleClick}
+                  onClick={handleIsFavourite}
                   color="white"
                   right="10px"
                   top="10px"
@@ -180,7 +150,7 @@ function DesktopRecipeL() {
             px="1em"
           >
             <Box textAlign="start" fontFamily="Dihi">
-              Протеинови палачинки с банан
+              {recipe?.name}
             </Box>
             <Flex direction="row" justifyContent="space-between">
               <Flex
@@ -190,160 +160,53 @@ function DesktopRecipeL() {
               >
                 <Flex alignItems="center">
                   <Image
-                    src="./images/icons/timer50.png"
+                    src="/images/icons/timer50.png"
                     w="20px"
                     h="20px"
                   ></Image>
-                  <Box pl="0.3em">120 мин</Box>
+                  <Box pl="0.3em">{recipe?.preparationTime} мин</Box>
                 </Flex>
                 <Flex alignItems="center">
                   <Image
-                    src="./images/icons/cutlery64.png"
+                    src="/images/icons/cutlery64.png"
                     w="20px"
                     h="20px"
                   ></Image>
-                  <Box>4 порции</Box>
+                  <Box>{recipe?.portions} порции</Box>
                 </Flex>
-                {isLoggedIn && (
-                  <Flex alignItems="center">
-                    <Image
-                      src="./images/icons/menu50.png"
-                      w="20px"
-                      h="20px"
-                    ></Image>
-                    <Box pl="0.5em">Добави към меню</Box>
-                  </Flex>
-                )}
+                {isLoggedIn && <AddInMenu recipeKey={recipe?._key} />}
               </Flex>
               {isLoggedIn && (
                 <Flex>
                   <StarRating
                     size={isMobile ? 15 : 20}
-                    votes={votes}
+                    ratingCount={recipe?.ratingCount}
+                    rating={recipe?.rating}
                     setRating={setRating}
                   ></StarRating>
                 </Flex>
               )}
             </Flex>
           </Flex>
-          <Box fontFamily="Dihi-italic">
-            is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-            Lorem ipsum, or lipsum as it is <br />
-            sometimes known, is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-            Lorem ipsum, or lipsum as it is <br />
-            sometimes known, is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-            Lorem ipsum, or lipsum as it is <br />
-            sometimes known, is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-            Lorem ipsum, or lipsum as it is <br />
-            sometimes known, is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-            Lorem ipsum, or lipsum as it is <br />
-            sometimes known, is dummy text used in laying out print, graphic
-            <br /> or web designs. The passage is attributed to an unknown
-            typesetter
-            <br /> in the 15th century who is thought to have scrambled parts of{" "}
-            <br />
-            Cicero's De Finibus Bonorum et Malorum for use in a type specimen
-            book.
-            <br /> It usually begins with: “Lorem ipsum dolor sit amet,
-            consectetur <br />
-          </Box>
+          <Box fontFamily="Dihi-italic">{recipe?.description}</Box>
         </Flex>
       </Box>
     </Flex>
   );
 }
-
-function MobileRecipeL() {
+function MobileRecipeL(props: any) {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isFavourite, setIsFavourite] = useState(false);
+  const { key } = useParams();
+
+  const rIngredients: IIngredientModel[] = props.recipe?.ingredients;
+  const recipe = props?.recipe;
+  const imagePath = `/images/recipes/${key}/${recipe?.displayImage}`;
+
   function handleClick() {
     setIsFavourite(!isFavourite);
   }
-  const [isFavourite, setIsFavourite] = useState(false);
-  const imagePath =
-    "./images/recipes/48625/d9369d83-ae60-4377-ad90-a5e8a2913d9a.png";
-  const ingredients = [
-    {
-      name: "Пилешко филе",
-      description: "Филе от пиле.",
-      _id: "Ingredient/86966",
-      _key: "86966",
-      _rev: "_gq3dYUC---",
-      measure: "700гр",
-    },
-    {
-      name: "Ориз",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "250гр",
-    },
-    {
-      name: "Банани",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "18бр.",
-    },
-    {
-      name: "Сол",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "1с.л.",
-    },
-    {
-      name: "Спанак",
-      description: "Обикновен ориз на зърна",
-      _id: "Ingredient/84446",
-      _key: "84446",
-      _rev: "_gq2FLJm---",
-      measure: "500гр",
-    },
-  ];
-  const votes = [2, 3, 5, 3, 4];
+
   const [rating, setRating] = useState();
   return (
     <Flex
@@ -372,25 +235,11 @@ function MobileRecipeL() {
           px="2em"
         >
           <Flex fontWeight="500" textAlign="left">
-            Родопско Пилешко с ориз и манатарки и морска сол
+            {recipe?.name}
           </Flex>
           {isLoggedIn && (
             <Flex alignItems="center" justifyContent="space-between">
-              <Link>
-                <Flex
-                  alignItems="center"
-                  fontSize="0.7em"
-                  opacity="0.8"
-                  gap="1em"
-                >
-                  <Image
-                    src="./images/icons/menu50.png"
-                    w="20px"
-                    h="20px"
-                  ></Image>
-                  <Box> +Добави към меню</Box>
-                </Flex>
-              </Link>
+              <AddInMenu recipeKey={recipe?._key} size="mobile" />
               <Flex onClick={handleClick} color="black">
                 {isFavourite ? (
                   <BsHeartFill size={20} />
@@ -412,18 +261,19 @@ function MobileRecipeL() {
         wrap="wrap"
       >
         <Flex>
-          <Image src="./images/icons/timer50.png" maxW="20px" h="20px"></Image>
-          <Box>120 мин</Box>
+          <Image src="/images/icons/timer50.png" maxW="20px" h="20px"></Image>
+          <Box>{recipe?.preparationTime} мин</Box>
         </Flex>
         <Flex>
-          <Image
-            src="./images/icons/cutlery64.png"
-            minW="20px"
-            h="20px"
-          ></Image>
-          <Box>4 порции</Box>
+          <Image src="/images/icons/cutlery64.png" minW="20px" h="20px"></Image>
+          <Box>{recipe?.portions} порции</Box>
         </Flex>
-        <StarRating size={20} votes={votes} setRating={setRating}></StarRating>
+        <StarRating
+          size={20}
+          ratingCount={recipe?.ratingCount}
+          rating={recipe?.rating}
+          setRating={setRating}
+        ></StarRating>
       </Flex>
       <Accordion borderColor="transparent" defaultIndex={[0, 1]} allowMultiple>
         <Box borderWidth="inherit" bg="#fdfdfd">
@@ -448,28 +298,24 @@ function MobileRecipeL() {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              {ingredients.map((i) => {
-                return (
-                  <Flex direction="column" fontSize="0.8em" w="100%">
-                    <Flex direction="row" alignItems="center" my="0.2em">
-                      <Icon
-                        alignSelf="center"
-                        color="orange"
-                        w="0.5em"
-                        mr="1em"
-                        as={BsFillCircleFill}
-                      ></Icon>
-                      <Flex justifyContent="space-between" w="100%" my="0.5em">
-                        <Box>{i.name}</Box>
-                        <Box fontWeight="500" alignSelf="flex-end">
-                          {i.measure}
-                        </Box>
-                      </Flex>
+              {rIngredients?.map((i: any) => (
+                <Flex
+                  direction="column"
+                  fontSize={{ base: "0.7em", md: "0.7em", lg: "0.8em" }}
+                  fontWeight="500"
+                  w="100%"
+                >
+                  <Flex direction="row" alignItems="center" my="0.2em">
+                    <Flex justifyContent="space-between" w="100%" my="0.5em">
+                      <Box>{i.name}</Box>
+                      <Box alignSelf="flex-end">
+                        {i.quantity + " " + i.measurementUnit}
+                      </Box>
                     </Flex>
-                    <Divider />
                   </Flex>
-                );
-              })}
+                  <Divider />
+                </Flex>
+              ))}
             </AccordionPanel>
           </AccordionItem>
         </Box>
@@ -488,34 +334,7 @@ function MobileRecipeL() {
                 </Box>
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit
-              amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. Lorem ipsum dolor sit amet, consectetur adipiscing
-              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor
-              sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. Lorem ipsum dolor sit amet, consectetur adipiscing
-              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
+            <AccordionPanel pb={4}>{recipe?.description}</AccordionPanel>
           </AccordionItem>
         </Box>
       </Accordion>
