@@ -16,7 +16,7 @@ export default function UserOut() {
       {!user && (
         <Box h="100%">
           <main className="App">
-            <Register />
+            <Outlet />
           </main>
         </Box>
       )}

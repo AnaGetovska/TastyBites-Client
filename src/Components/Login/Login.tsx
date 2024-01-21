@@ -113,7 +113,10 @@ export default function Login() {
                     type="submit"
                     mb="3em"
                   >
-                    Submit
+                    Влез
+                  </Button>
+                  <Button onClick={(e) => navigate("/register")}>
+                    Регистрирай се
                   </Button>
                 </Center>
               </form>
