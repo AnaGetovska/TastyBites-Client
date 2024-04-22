@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { IRecipeModel } from "../../Models/IRecipeModel";
-import ISearchedItem from "../../Models/ISearchedItem";
+import { useState } from "react";
 import ISearchBar from "../../Models/ISearchBar";
 import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { accent2 } from "../../Styles/ColorPalette";
 //При натискане на клавиш изпращаме написаното, ако е повече от три символа се зарежда data отвън
 const Search = ({ label, pholder, onChange, color, bg }: ISearchBar) => {
   const [searchValue, setSearchValue] = useState("");

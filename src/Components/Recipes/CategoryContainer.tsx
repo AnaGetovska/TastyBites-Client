@@ -39,7 +39,7 @@ const CategoryContainer = (props: any) => {
         border="gray"
         colorScheme="green"
         iconColor="white.400"
-        size="sm"
+        size="md"
         pr="0.6em"
         value={v._key}
       >
@@ -72,7 +72,7 @@ const CategoryContainer = (props: any) => {
       borderRadius="8"
       p="0.5em"
       pl="1em"
-      fontSize="0.8em"
+      fontSize="1em"
     >
       <Flex
         direction="column"

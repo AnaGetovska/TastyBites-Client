@@ -1,9 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./Nav";
 import useAuth from "../../Hooks/useAuth";
-import Login from "../Login/Login";
-import { Box, Flex } from "@chakra-ui/react";
-import Register from "../Login/Register";
+import { Box } from "@chakra-ui/react";
 
 export default function UserOut() {
   const user = useAuth().auth;

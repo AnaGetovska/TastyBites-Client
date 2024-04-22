@@ -2,20 +2,23 @@ import React, { useEffect, useState } from "react";
 import "../../Styles/App.css";
 import { Box, Flex, Image, Link } from "@chakra-ui/react";
 import IIngredientModel from "../../Models/IIngredientModel";
-import useProducts from "../../Hooks/useProducts";
 import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
 import ApiService from "../Services/ApiService";
 import IShoppingListItem from "../../Models/IShoppingListItem";
+import useProducts from "../../Hooks/useProducts";
 
-function RecipeS(props: any) {
-  const recipe: IExtendedRecipeModel = props?.recipe;
-  const ingredients: IIngredientModel[] = recipe?.ingredients;
+interface IRecipeS {
+  recipe: IExtendedRecipeModel;
+  onChange: Function;
+}
+
+function RecipeS({ recipe, onChange }: IRecipeS) {
+  const ingredients: IIngredientModel[] = recipe.ingredients;
   const imagePath = `/images/recipes/${recipe._key}/${recipe.displayImage}`;
   console.log(recipe);
-
+  const productsContext = useProducts();
   const [isOpen, setIsOpen] = useState(false);
   const [shoppingListItem, setShoppingListItem] = useState<IShoppingListItem>();
-
   function toggleIngredinets(): void {
     setIsOpen((prevValue) => !prevValue);
   }
@@ -29,13 +32,14 @@ function RecipeS(props: any) {
 
   function handleClick(i: IIngredientModel): void {
     const itemValue = [i._key, i.name, i.quantity, i.measurementUnit];
-
     const shoppingItem: IShoppingListItem = {
       isIngredient: true,
       value: itemValue.join("|"),
     };
+    productsContext.addShoppingItem(shoppingItem);
 
     setShoppingListItem(shoppingItem);
+    onChange();
   }
 
   return (
@@ -128,7 +132,7 @@ function RecipeS(props: any) {
           w="1.4em"
           position={"absolute"}
           top="1em"
-          right={{ base: "1em", md: "1em", lg: "1.85em" }}
+          left="0"
           borderTopRadius="5px"
           src={"./images/products.png"}
           alt="products label"

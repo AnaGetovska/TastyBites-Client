@@ -10,4 +10,5 @@ export interface IExtendedRecipeModel extends IRecipeModel {
   ingredients: IIngredientModel[];
   rating: number;
   ratingCount: number;
+  likedBy: boolean;
 }

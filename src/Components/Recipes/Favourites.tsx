@@ -10,18 +10,10 @@ function Favourites() {
   const [allRecipes, setAllRecipes] = useState<IExtendedRecipeModel[]>();
 
   useEffect(() => {
-    ApiService.getAllRecipesExtended().then((recipes) =>
-      setAllRecipes(recipes)
-    );
+    ApiService.getFavourites().then((recipes) => setAllRecipes(recipes));
   }, []);
   return (
-    <Flex
-      direction={"column"}
-      gap="1em"
-      mt="4em"
-      bg="rgb(251 233 188)"
-      h="inherit"
-    >
+    <Flex direction={"column"} gap="1em" bg="rgb(251 233 188)" h="inherit">
       <Box position={"relative"}>
         <Image
           h={{ base: "6em", md: "10em", lg: "12em" }}
@@ -52,8 +44,23 @@ function Favourites() {
         direction={{ base: "column", md: "row" }}
         gap="1em"
         mt="4em"
-        margin="auto"
+        mx="auto"
       >
+        {allRecipes !== undefined && allRecipes.length <= 0 && (
+          <Box
+            fontSize={{ base: "1em", md: "1.5em" }}
+            fontStyle="italic"
+            fontFamily="none"
+          >
+            <Image
+              m="auto"
+              mb="1em"
+              w={{ base: "5em", md: "10em" }}
+              src="images/chef.png"
+            ></Image>
+            Все още няма любими рецепти.
+          </Box>
+        )}
         <Flex
           flexWrap="wrap"
           direction={"row"}

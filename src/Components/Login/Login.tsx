@@ -10,6 +10,8 @@ import {
   FormLabel,
   VStack,
   Button,
+  Link,
+  Flex,
 } from "@chakra-ui/react";
 import useAuth from "../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -107,17 +109,23 @@ export default function Login() {
                   />
                 </FormControl>
                 <Center>
-                  <Button
-                    isLoading={isSubmitting}
-                    bg="rgba(213, 236, 165, 1)"
-                    type="submit"
-                    mb="3em"
-                  >
-                    Влез
-                  </Button>
-                  <Button onClick={(e) => navigate("/register")}>
-                    Регистрирай се
-                  </Button>
+                  <Flex direction="column">
+                    <Button
+                      isLoading={isSubmitting}
+                      bg="rgba(213, 236, 165, 1)"
+                      type="submit"
+                      mt="1em"
+                    >
+                      Влез
+                    </Button>
+                    <Link
+                      onClick={(e) => navigate("/register")}
+                      mt="1em"
+                      mb="3em"
+                    >
+                      Регистрирай се
+                    </Link>
+                  </Flex>
                 </Center>
               </form>
             </VStack>

@@ -23,7 +23,7 @@ export default function FridgeContentsFilter() {
 
   useEffect(() => {
     if (searchString.length >= 2) {
-      ApiService.getAllIngredientsByNameCut(searchString).then((ingredients) =>
+      ApiService.getAllIngredientsByWildcard(searchString).then((ingredients) =>
         setSuggestedIngredients(ingredients)
       );
     }

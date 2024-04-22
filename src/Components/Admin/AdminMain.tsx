@@ -21,7 +21,7 @@ export default function AdminHome() {
 
   useEffect(() => {
     if (searchString.length >= 3) {
-      ApiService.getAllRecipesByNameCut(searchString).then((recipes) =>
+      ApiService.getAllRecipesByWildcard(searchString).then((recipes) =>
         setAllRecipes(recipes)
       );
     }

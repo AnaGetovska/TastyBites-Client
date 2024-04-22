@@ -7,6 +7,7 @@ import {
   Collapse,
   Stack,
   Accordion,
+  Heading,
 } from "@chakra-ui/react";
 import CategoryContainer from "../Recipes/CategoryContainer";
 import ICategoryFilter from "../../Models/ICategoryFilter";
@@ -90,21 +91,17 @@ const DesktopFilter = () => {
         w={{ md: "24%", lg: "20%", xl: "15%" }}
         h="100%"
       >
-        <Box
-          mt="0.5em"
-          fontSize={{ base: "0.5em", md: "0.8em", lg: "1em" }}
-          fontWeight="500"
-        >
+        <Box mt="0.5em" fontSize={{ md: "1em", lg: "1.1em" }} fontWeight="500">
           Всички рецепти
         </Box>
         <Link as={RouterLink} to="/fridge-filter">
           <Button
             w="95%"
             bg="rgba(213, 236, 165, 1)"
-            ml="auto"
-            mr="auto"
+            mx="auto"
             mt="1em"
-            fontSize="0.8em"
+            fontSize="1em"
+            className="wrap-text"
           >
             Какво имам в хладилника?
           </Button>

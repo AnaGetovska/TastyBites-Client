@@ -23,11 +23,11 @@ export default function NavLogin() {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <Box position="fixed" top="0" left="0" zIndex="10" right="0">
+    <Box position="sticky" top="0" left="0" zIndex="10" right="0">
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
-        minH={"60px"}
+        minH={{ base: "60px", md: "70px" }}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -55,7 +55,11 @@ export default function NavLogin() {
             fontFamily={"heading"}
             color={useColorModeValue("gray.800", "white")}
           >
-            <Image w="4em" src="/images/Logo.svg" />
+            <Image
+              w={{ base: "4em", md: "5em" }}
+              src="/images/Logo.svg"
+              onClick={(ne) => navigate("/all-recipes")}
+            />
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
@@ -112,7 +116,7 @@ const DesktopNav = () => {
             as="a"
             p={2}
             href={item.href ?? "#"}
-            fontSize={"sm"}
+            fontSize={{ base: "1em", md: "1em" }}
             fontWeight={500}
             color={linkColor}
             _hover={{

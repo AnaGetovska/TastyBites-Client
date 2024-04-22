@@ -1,4 +1,3 @@
-import useAuth from "../../Hooks/useAuth";
 import ICategoryModel from "../../Models/ICategoryModel";
 import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
 import IInMenuModel from "../../Models/IInMenuModel";
@@ -101,7 +100,7 @@ class ApiService {
     return await this.post("recipe/filter/by-ingredients", ingredientsKeys);
   }
 
-  public async getAllRecipesByNameCut(
+  public async getAllRecipesByWildcard(
     segment: string
   ): Promise<IRecipeModel[]> {
     return await this.get(`recipe/filter/name/` + encodeURIComponent(segment));
@@ -127,7 +126,7 @@ class ApiService {
     return await this.get("ingredient/all");
   }
 
-  public async getAllIngredientsByNameCut(
+  public async getAllIngredientsByWildcard(
     segment: string
   ): Promise<IIngredientModel[]> {
     return await this.get(
@@ -161,6 +160,18 @@ class ApiService {
 
   public async deleteFromShoppingList(index: number) {
     return await this.delete("user/shopping-list/" + index);
+  }
+
+  public async deleteFromFavourites(key: string) {
+    return await this.delete("user/favourites/" + key);
+  }
+
+  public async addToFavourites(key: string) {
+    return await this.post("user/favourites/", key);
+  }
+
+  public async getFavourites(): Promise<IExtendedRecipeModel[]> {
+    return await this.get("user/favourites");
   }
 }
 

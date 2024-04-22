@@ -17,7 +17,7 @@ const Layout = () => {
       ) : (
         <Flex direction="column" h="100%">
           <Navbar />
-          <main className="App" inline-style="flex-grow: 1">
+          <main className="App">
             <Outlet />
           </main>
         </Flex>

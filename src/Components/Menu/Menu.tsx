@@ -15,7 +15,17 @@ export default function Menu() {
   const [menu, setMenu] = useState<IInMenuModel[]>();
   const [dayRecipes, setDayRecipes] = useState<DayRecipeMap>();
   const [recipes, setRecipes] = useState<IExtendedRecipeModel[]>();
-  console.log(recipes);
+  const [toggleChange, setToggleChange] = useState(false);
+  const daysOfWeek = [
+    "Понеделник",
+    "Вторник",
+    "Сряда",
+    "Четвъртък",
+    "Петък",
+    "Събота",
+    "Неделя",
+  ];
+
   useEffect(() => {
     ApiService.getWeeklyMenu().then((menu): any => {
       setMenu(menu);
@@ -42,17 +52,12 @@ export default function Menu() {
     });
   }, []);
 
-  const daysOfWeek = [
-    "Понеделник",
-    "Вторник",
-    "Сряда",
-    "Четвъртък",
-    "Петък",
-    "Събота",
-    "Неделя",
-  ];
+  function onShoppingListChange() {
+    setToggleChange(!toggleChange);
+  }
+
   return (
-    <Flex direction={"column"} gap="1em" mt="4em">
+    <Flex direction={"column"} gap="1em">
       <Box position={"relative"}>
         <Image
           h={{ base: "6em", md: "10em", lg: "12em" }}
@@ -102,7 +107,7 @@ export default function Menu() {
               {daysOfWeek[Number(i) - 1]}
             </Box>
             {(dayRecipes as DayRecipeMap)[i].map((r) => (
-              <RecipeS recipe={r} />
+              <RecipeS recipe={r} onChange={onShoppingListChange} />
             ))}
           </Flex>
         ))}

@@ -1,33 +1,34 @@
 import React from "react";
 import { useState } from "react";
+import IShoppingListItem from "../Models/IShoppingListItem";
 
 export interface IShoppingListContext {
-  products: string[];
+  products: IShoppingListItem[];
   setProducts: Function;
   clearProducts: Function;
-  addProductKey: Function;
-  removeProductKey: Function;
+  addShoppingItem: Function;
+  removeShoppingItem: Function;
 }
 
 const ShoppingListContext = React.createContext<IShoppingListContext>({
   products: [],
-  setProducts: (filter: string[]) => console.warn("no products"),
+  setProducts: (filter: IShoppingListItem[]) => console.warn("no products"),
   clearProducts: () => console.warn("no products"),
-  addProductKey: () => console.warn("no products"),
-  removeProductKey: () => console.warn("no products"),
+  addShoppingItem: () => console.warn("no products"),
+  removeShoppingItem: () => console.warn("no products"),
 });
 
 const ShoppingListProvider = ({ children }: { children?: React.ReactNode }) => {
-  const getProducts = (): string[] => {
+  const getProducts = (): IShoppingListItem[] => {
     const productsString = localStorage.getItem("products");
     if (!productsString || productsString === "undefined") {
       return [];
     }
     return productsString ? JSON.parse(productsString) : null;
   };
-  const [products, setProducts] = useState(getProducts());
+  const [products, setProducts] = useState<IShoppingListItem[]>(getProducts());
 
-  const saveProducts = (newProducts: string[]) => {
+  const saveProducts = (newProducts: IShoppingListItem[]) => {
     localStorage.setItem("products", JSON.stringify(newProducts));
     setProducts(newProducts);
   };
@@ -37,18 +38,18 @@ const ShoppingListProvider = ({ children }: { children?: React.ReactNode }) => {
     setProducts([]);
   };
 
-  const addProductKey = (key: string) => {
-    const index = products.indexOf(key);
+  const addShoppingItem = (item: IShoppingListItem) => {
+    const index = products.indexOf(item);
     if (index !== -1) {
       return;
     }
     let newProducts = getProducts();
-    newProducts.push(key);
+    newProducts.push(item);
     saveProducts(newProducts);
   };
 
-  const removeProductKey = (key: string) => {
-    const index = products.indexOf(key);
+  const removeShoppingItem = (item: IShoppingListItem) => {
+    const index = products.indexOf(item);
     if (index === -1) {
       return;
     }
@@ -62,8 +63,8 @@ const ShoppingListProvider = ({ children }: { children?: React.ReactNode }) => {
         setProducts: saveProducts,
         clearProducts,
         products,
-        addProductKey,
-        removeProductKey,
+        addShoppingItem,
+        removeShoppingItem,
       }}
     >
       {children}

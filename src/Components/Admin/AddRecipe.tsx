@@ -13,7 +13,6 @@ import {
   Tag,
   TableContainer,
   Table,
-  TableCaption,
   Thead,
   Tr,
   Th,
@@ -27,37 +26,27 @@ import { LiaImage } from "react-icons/lia";
 import ApiService from "../Services/ApiService";
 import IIngredientModel from "../../Models/IIngredientModel";
 import Search from "./Search";
-import _ from "lodash";
+import _, { forEach } from "lodash";
 import IRecipeRequest from "../../Models/IRecipeRequest";
 import IIngredientRequest from "../../Models/IIngredientRequest";
 import ICategoryModel from "../../Models/ICategoryModel";
 import CategoryService from "../Services/CategoryService";
+import ICategoryRequest from "../../Models/ICategoryRequest";
 
 export default function EditRecipe(props: any) {
   const form = useRef<HTMLFormElement | null>(null);
-  const [formData, setFormData] = useState<IRecipeRequest>({
-    _key: "",
-    _rev: "",
-    _id: "",
-    name: "",
-    preparationTime: 0,
-    portions: 0,
-    description: "",
-    displayImage: undefined,
-    ingredients: [],
-    categories: [],
-    allergensKeys: [],
-  });
-  const [file, setFile] = useState<File | undefined>();
+  const [searchString, setSearchString] = useState<string>("");
   const [suggestedIngredients, setSuggestedIngredients] = useState<
     IIngredientModel[]
   >([]);
-  const [searchString, setSearchString] = useState<string>("");
   const [recipeIngredients, setRecipeIngredients] = useState<
     IIngredientRequest[]
   >([]);
-  const [categories, setCategories] = useState<ICategoryModel[]>();
-  const [recipeCategories, setRecipeCategories] = useState<ICategoryModel[]>();
+  const [categoriesAll, setCategoriesAll] = useState<ICategoryModel[]>();
+  const [recipeCategories, setRecipeCategories] = useState<ICategoryRequest[]>(
+    []
+  );
+  const [file, setFile] = useState<File | undefined>();
 
   const setSearchValue = (searchString: string) => {
     setSearchString(searchString);
@@ -65,25 +54,26 @@ export default function EditRecipe(props: any) {
 
   useEffect(() => {
     if (searchString.length >= 2) {
-      ApiService.getAllIngredientsByNameCut(searchString).then((ingredients) =>
+      ApiService.getAllIngredientsByWildcard(searchString).then((ingredients) =>
         setSuggestedIngredients(ingredients)
       );
     }
   }, [searchString]);
 
   useEffect(() => {
-    CategoryService.getAll().then((categories) => setCategories(categories));
+    CategoryService.getAll().then((categories) => setCategoriesAll(categories));
   });
-  console.log(categories);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setFormData((prevData) => ({
-      ...prevData,
-      ["displayImage"]: file,
-      ["categories"]: recipeCategories,
-    }));
     const payload = new FormData(form?.current || undefined);
+    recipeIngredients.forEach((i) => {
+      payload.append("ingredients[]", JSON.stringify(i));
+    });
+
+    recipeCategories?.forEach((c) => {
+      payload.append("categories[]", JSON.stringify(c));
+    });
 
     try {
       let res = await fetch("http://localhost:5214/api/recipe/add", {
@@ -91,10 +81,7 @@ export default function EditRecipe(props: any) {
         body: payload,
       });
       let resJson = await res.json();
-      console.log(resJson);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   function handleChange(e: any) {
@@ -105,7 +92,6 @@ export default function EditRecipe(props: any) {
       };
       setFile(target.files[0]);
     }
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
   }
 
   function addIngredient(i: IIngredientModel): void {
@@ -180,16 +166,48 @@ export default function EditRecipe(props: any) {
   }
 
   function onChangeCategory(category: ICategoryModel): void {
-    let currentCategories = [];
-    if (recipeCategories === undefined) {
-      currentCategories.push(category);
+    console.log(category);
+    if (recipeCategories.length === 0 || recipeCategories[0].name === "") {
+      let newArray = [];
+      if (category._key !== undefined) {
+        let newCategory: ICategoryRequest = {
+          _key: category._key,
+          name: category.name,
+          type: category.type,
+          description: category.description,
+        };
+        newArray.push(newCategory);
+      }
+      setRecipeCategories(newArray);
     } else {
-      let currentCategories: ICategoryModel[] = recipeCategories;
-      currentCategories.push(category);
+      if (category._key !== undefined) {
+        let newCategory: ICategoryRequest = {
+          _key: category._key,
+          name: category.name,
+          type: category.type,
+          description: category.description,
+        };
+        setRecipeCategories((previousState) => {
+          if (
+            !_.find(previousState, (i) => {
+              return i._key === newCategory._key;
+            })
+          ) {
+            return [...previousState, newCategory];
+          }
+          return previousState;
+        });
+      }
     }
-    //FIX Categories
-    console.log(currentCategories);
-    setRecipeCategories(currentCategories);
+    console.log(recipeCategories);
+  }
+
+  function removeCategory(name: string): void {
+    setRecipeCategories((current) =>
+      current.filter((ing) => {
+        return ing.name !== name;
+      })
+    );
   }
 
   return (
@@ -257,18 +275,18 @@ export default function EditRecipe(props: any) {
                   <Tr>
                     <Td>{i.name}</Td>
                     <Td onChange={(e) => addQuantity(i._key, e)}>
-                      <Input type="text" />
+                      <Input type="number" />
                     </Td>
                     <Td w="25%">
                       <Select
                         onChange={(e) => addMeasurementUnit(i._key, e)}
                         placeholder="Select option"
                       >
-                                <option value="с.л.">с.л.</option>
+                        <option value="с.л.">с.л.</option>
                         <option value="ч.л.">ч.л.</option>
                         <option value="ч.ч.">ч.ч.</option>
                         <option value="к.ч.">к.ч.</option>
-                                <option value="с.л.">бр.</option>
+                        <option value="с.л.">бр.</option>
                         <option value="щипка/и">щипка/и</option>
                         <option value="гр.">гр.</option>
                         <option value="кг.">кг.</option>
@@ -289,7 +307,7 @@ export default function EditRecipe(props: any) {
         <FormControl>
           <FormLabel>Свързани категории</FormLabel>
           <Flex flexWrap="wrap" my="1em" direction="row">
-            {categories?.map((c) => (
+            {categoriesAll?.map((c) => (
               <Tag
                 m="0.5em"
                 _hover={{ bg: "gray.200", cursor: "pointer" }}
@@ -303,7 +321,15 @@ export default function EditRecipe(props: any) {
           <Divider />
           <Flex flexWrap="wrap" my="1em" direction="row">
             {recipeCategories?.map((c) => (
-              <Box>{c.name}</Box>
+              <Tag
+                m="0.5em"
+                bg="green.100"
+                _hover={{ bg: "green.200", cursor: "pointer" }}
+                key={c._key}
+                onClick={(e) => removeCategory(c.name)}
+              >
+                {c.name}
+              </Tag>
             ))}
           </Flex>
         </FormControl>

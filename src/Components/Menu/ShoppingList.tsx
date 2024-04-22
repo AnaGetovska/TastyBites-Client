@@ -16,18 +16,19 @@ import {
 import ApiService from "../Services/ApiService";
 import { useEffect, useState } from "react";
 import IShoppingListItem from "../../Models/IShoppingListItem";
+import useProducts from "../../Hooks/useProducts";
 
 export default function ShoppingList() {
   const [shoppingList, setShoppingList] = useState<IShoppingListItem[]>();
-  const [recentlyDeleted, setRecentlyDeleted] = useState<IShoppingListItem[]>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  //const [recentlyDeleted, setRecentlyDeleted] = useState<IShoppingListItem[]>();
+  //const { isOpen, onOpen, onClose } = useDisclosure();
+  const productsContext = useProducts();
   useEffect(() => {
-    ApiService.getShoppingList().then((list) => setShoppingList(list));
-  }, []);
-
-  console.log(shoppingList);
-  function handleDeleteList(e: any): void {}
+    ApiService.getShoppingList().then((list) => {
+      productsContext.setProducts(list);
+      setShoppingList(productsContext.products);
+    });
+  }, [productsContext]);
 
   function getIngredientValue(i: IShoppingListItem) {
     const values = i.value.split("|");

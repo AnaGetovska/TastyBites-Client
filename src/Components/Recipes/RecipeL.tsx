@@ -3,27 +3,26 @@ import "../../Styles/App.css";
 import {
   Box,
   Flex,
-  Icon,
   Image,
   useMediaQuery,
-  Link,
   Divider,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
+  Heading,
 } from "@chakra-ui/react";
 import Filter from "../Layout/Filter";
 import StarRating from "../Rating/StarRating";
-import { BsFillCircleFill } from "react-icons/bs";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import useAuth from "../../Hooks/useAuth";
 import ApiService from "../Services/ApiService";
 import IIngredientModel from "../../Models/IIngredientModel";
 import { IExtendedRecipeModel } from "../../Models/IExtendedRecipeModel";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import IInMenuModel from "../../Models/IInMenuModel";
 import AddInMenu from "../Menu/AddInMenu";
+import Markdown from "react-markdown";
 
 function RecipeL(props: any) {
   const [recipe, setRecipe] = useState<IExtendedRecipeModel>();
@@ -54,7 +53,7 @@ function DesktopRecipeL(props: any) {
   const recipe = props?.recipe;
   const rIngredients: IIngredientModel[] = props.recipe?.ingredients;
   const [isMobile] = useMediaQuery("(max-width: 992px)");
-  const imagePath = `/images/recipes/${key}/${recipe?.displayImage}`;
+  const imageUrl = "http://localhost:5214/api/image/" + recipe?.displayImage;
 
   function handleIsFavourite() {
     setIsFavourite(!isFavourite);
@@ -64,8 +63,8 @@ function DesktopRecipeL(props: any) {
     <Flex
       display={{ base: "none", md: "flex" }}
       direction={{ base: "column", md: "row" }}
+      h="inherit"
       gap="1em"
-      mt="4em"
     >
       <Filter />
       <Box w={{ md: "30%", lg: "30%", xl: "20%" }} mt="1em">
@@ -82,7 +81,7 @@ function DesktopRecipeL(props: any) {
             bg="rgba(255, 207, 86, 1)"
             fontWeight="500"
             p="0.3em"
-            fontSize="0.8em"
+            fontSize="1em"
           >
             Необходими продукти
           </Box>
@@ -92,7 +91,7 @@ function DesktopRecipeL(props: any) {
             {rIngredients?.map((i: any) => (
               <Flex
                 direction="column"
-                fontSize={{ md: "0.7em", lg: "0.8em" }}
+                fontSize={{ md: "0.8em", lg: "0.9em" }}
                 fontWeight="500"
                 w="100%"
               >
@@ -120,7 +119,7 @@ function DesktopRecipeL(props: any) {
                 h="20em"
                 w="100%"
                 objectFit="cover"
-                src={imagePath}
+                src={imageUrl}
               ></Image>
               {isLoggedIn && (
                 <Box
@@ -149,9 +148,9 @@ function DesktopRecipeL(props: any) {
             justifyContent="space-around"
             px="1em"
           >
-            <Box textAlign="start" fontFamily="Dihi">
+            <Heading as="h1" textAlign="start" fontFamily="Dihi">
               {recipe?.name}
-            </Box>
+            </Heading>
             <Flex direction="row" justifyContent="space-between">
               <Flex
                 fontSize={{ md: "0.6em", lg: "0.7em", xl: "0.8em" }}
@@ -188,7 +187,13 @@ function DesktopRecipeL(props: any) {
               )}
             </Flex>
           </Flex>
-          <Box fontFamily="Dihi-italic">{recipe?.description}</Box>
+          <Box
+            w={{ md: "100%", lg: "70%", xl: "60%" }}
+            my="2em"
+            textAlign="left"
+          >
+            <Markdown>{recipe?.description}</Markdown>
+          </Box>
         </Flex>
       </Box>
     </Flex>
@@ -201,7 +206,7 @@ function MobileRecipeL(props: any) {
 
   const rIngredients: IIngredientModel[] = props.recipe?.ingredients;
   const recipe = props?.recipe;
-  const imagePath = `/images/recipes/${key}/${recipe?.displayImage}`;
+  const imageUrl = "http://localhost:5214/api/image/" + recipe?.displayImage;
 
   function handleClick() {
     setIsFavourite(!isFavourite);
@@ -217,7 +222,7 @@ function MobileRecipeL(props: any) {
     >
       <Box
         position="relative"
-        bgImage={imagePath}
+        bgImage={imageUrl}
         h="16em"
         w="100%"
         justifyContent="flex-end"

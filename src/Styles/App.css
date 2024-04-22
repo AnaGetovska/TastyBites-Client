@@ -56,3 +56,18 @@
 .add-groceries-icon:hover {
   text-decoration: none;
 }
+.on-focus {
+  transition: all 0.2s;
+}
+
+.on-focus:hover {
+  transform: scale(1.02);
+}
+
+.add-cursor {
+  cursor: pointer;
+}
+
+.wrap-text {
+  text-wrap: balance !important;
+}

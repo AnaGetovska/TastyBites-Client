@@ -31,12 +31,14 @@ function AllRecipes() {
       setAllRecipes(recipes)
     );
   }, []);
+
+  console.log(allRecipes);
   return (
     <Flex
       display={{ md: "flex" }}
       direction={{ base: "column", md: "row" }}
+      h="inherit"
       gap="1em"
-      mt="4em"
     >
       <Filter />
       <Flex
