@@ -11,6 +11,8 @@ import { Flex } from "@chakra-ui/react";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import AdminMain from "./Components/Admin/AdminMain";
 import AddRecipe from "./Components/Admin/AddRecipe";
+import AddIngredient from "./Components/Admin/AddIngredient";
+import AddCategory from "./Components/Admin/AddCategory";
 import UserOut from "./Components/Layout/UserOut";
 import FridgeContentsFilter from "./Components/FridgeContentsFilter";
 import Menu from "./Components/Menu/Menu";
@@ -22,7 +24,9 @@ function App() {
       <Routes>
         <Route element={<AdminLayout />}>
           <Route path="admin" element={<AdminMain />} />
-          <Route path="add-recipe" element={<AddRecipe />} />
+                  <Route path="add-recipe" element={<AddRecipe />} />
+                  <Route path="add-ingredient" element={<AddIngredient />} />
+                  <Route path="add-category" element={<AddCategory />} />
         </Route>
         <Route element={<UserOut />}>
           <Route path="login" element={<Login />} />

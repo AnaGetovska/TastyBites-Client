@@ -32,8 +32,10 @@ import IIngredientRequest from "../../Models/IIngredientRequest";
 import ICategoryModel from "../../Models/ICategoryModel";
 import CategoryService from "../Services/CategoryService";
 import ICategoryRequest from "../../Models/ICategoryRequest";
+import { useNavigate } from "react-router-dom";
 
 export default function EditRecipe(props: any) {
+  const navigate = useNavigate();
   const form = useRef<HTMLFormElement | null>(null);
   const [searchString, setSearchString] = useState<string>("");
   const [suggestedIngredients, setSuggestedIngredients] = useState<
@@ -79,8 +81,7 @@ export default function EditRecipe(props: any) {
       let res = await fetch("http://localhost:5214/api/recipe/add", {
         method: "POST",
         body: payload,
-      });
-      let resJson = await res.json();
+      }).then(() => navigate("/admin"));
     } catch (err) {}
   };
 
